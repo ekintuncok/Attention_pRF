@@ -22,9 +22,8 @@ x = [-4,0,5]; y = [3, 4, -3]; sigma = [1, 2, 3]; % in degrees of visual field
 AF_x = 10; AF_y = 0; AF_sigma = 2;
 
 % Create pink noise
-whitenoise = randn(1,300);
-noise = cumsum(whitenoise);
-minNoise = min(noise); %not sure how else to fix the scaling problem here. In the following line as well.
+% whitenoise = randn(1,300);
+% noise = cumsum(whitenoise);
 
 % Simulate (one tiny) dataset:
 [~,AFSimVec] = createGauissanFields(X,Y,AF_x,AF_y,AF_sigma);
@@ -32,7 +31,7 @@ minNoise = min(noise); %not sure how else to fix the scaling problem here. In th
 for ii = 1:length(x)
 [~,RFSimVec] = createGauissanFields(X,Y,x(ii),y(ii),sigma(ii));
 boldMeasured1(ii,:) = conv(AFSimVec .* RFSimVec * stimVec,h);
-boldMeasured(ii,:) = mx(boldMeasured1(ii,1:timepoints)) + mx((noise+abs(minNoise)));
+boldMeasured(ii,:) = mx(boldMeasured1(ii,1:timepoints)) + pinknoise(300)';
 end
 
 data=boldMeasured;
