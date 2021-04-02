@@ -45,12 +45,13 @@ data=boldMeasured;
 % 2) stim driven pRF size [sigma]
 % 3) attention field size [AF_sigma]
 
+x0 = [0 , 0, 1]; % Define the initial values
+A = [1,0,0;0,1,0]; % Up to 10deg visual field eccentricity & polar angle:
+b = [10;10];
+%lb = [-10, -10, 0]; % Lower bound
+
 for ii = 1:length(x)
 fun = @(p) (RSSR(p,stim,data(ii,:)));
 fitParams(ii,:) = fmincon(fun,x0,A,b)
 end
 
-x0 = [0 , 0, 1]; % Define the initial values
-A = [1,0,0;0,1,0]; % Up to 10deg visual field eccentricity & polar angle:
-b = [10;10];
-%lb = [-10, -10, 0]; % Lower bound
