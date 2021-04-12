@@ -57,15 +57,29 @@ x0 = [0 , 0, 1]; % Define the initial values
 lb = [-10, -10,  0.01]; % Lower bound
 ub = [ 10,  10, 10];    % Lower bound
 
-fitParams= zeros(length(x),3);
+fitParams= zeros(3,nPRFs);
 
 for ii = 1:nPRFs
-    fprintf('Solving pRF for voxel %d of %d\n', ii, );
+    fprintf('Solving pRF for voxel %d of %d\n', ii);
     fun = @(p) (RSSR(p,stim,data(:,ii)));
-    fitParams(ii,:) = fmincon(fun,x0,[],[],[],[],lb,ub);
+    fitParams(:,ii) = fmincon(fun,x0,[],[],[],[],lb,ub);
 end
 
-appPRFparams = stim2app(stimParams, attParams);
+% True params
+stimParams = [x;y;sigma];
+attParamsRight = [AF_x,AF_y,AF_sigma];
+attParamsLeft = [-AF_x,AF_y,AF_sigma];
+
+appPRFparamsR = stim2app(stimParams, attParamsRight);
+appPRFparamsL = stim2app(stimParams, attParamsLeft);
+
+figure(1);
+subplot(131)
+scatter(fitParams(1,:),appPRFparamsR(1,:))
+subplot(132)
+scatter(fitParams(2,:),appPRFparamsR(2,:))
+subplot(133)
+scatter(fitParams(3,:),appPRFparamsR(3,:))
 
 %% PLOTS
 % See how the apparent pRFs change for different stimulus driven pRFs when
