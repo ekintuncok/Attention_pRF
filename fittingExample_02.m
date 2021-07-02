@@ -23,22 +23,21 @@ y       = linspace(-10,10,nPRFs);
 sigma   = linspace(1,5,nPRFs); % in degrees of visual field
 
 % Define the attention field parameters
+% AF parameters here are set for Gabor targets (AFs) that are positioned
+% along the horizontal meridian. Therefore, Y is always equal to 0. 
 nAFs   = 20;
 AF_x    = linspace(-10,10,nAFs); 
-AF_y    = linspace(-10,10,nAFs); 
+AF_y    = 0; 
 AF_sigma = 1;
 % AF_x = 12; AF_y = 0; AF_sigma = 2; %adjusted the AF coordinates so that it falls outside of the mapped eccentricity
 
-% Create pink noise
-
-% Simulate (one tiny) dataset:
-
+% Simulate (one tiny) dataset with pink noise added:
 noiselessBOLD  = cell(nAFs,1);data  = cell(nAFs,1);
 
 for jj = 1:nAFs
     for ii = 1:nPRFs
         [~,RFSimVec] = createGauissanFields(X,Y,x(ii),y(ii),sigma(ii));
-        [~,AFSimVec] = createGauissanFields(X,Y,AF_x(jj),AF_y(jj),AF_sigma);
+        [~,AFSimVec] = createGauissanFields(X,Y,AF_x(jj),AF_y,AF_sigma);
         tmp = conv(AFSimVec .* RFSimVec * stimVec,h);
         tmp = tmp / std(tmp);
         noiselessBOLD{jj}(:,ii) = tmp(1:timepoints);
@@ -57,7 +56,7 @@ end
 % 2) stim driven pRF size [sigma]
 % 3) attention field size [AF_sigma]
 x0 = [0 , 0, 1]; % Define the initial values
-% A = [1,0,0;0,1,0]; % Up to 10deg visual field eccentricity & polar angle:
+% A = [1,0,0;0,1,0];
 % b = [10;10];
 lb = [-10, -10,  0.01]; % Lower bound
 ub = [ 10,  10, 10];    % Lower bound
@@ -74,23 +73,93 @@ end
 
 % True params
 stimParams = [x;y;sigma];
-attParamsRight = [AF_x; AF_y; repmat(AF_sigma,1,20)];
-attParamsLeft = [-AF_x; AF_y; repmat(AF_sigma,1,20)];
+attParamsRight = [AF_x; repmat(AF_y,1,20); repmat(AF_sigma,1,20)];
+attParamsLeft = [-AF_x; repmat(AF_y,1,20); repmat(AF_sigma,1,20)];
 
 for ii = 1:nAFs
 appPRFparamsR{ii} = stim2app(stimParams, attParamsRight(:,ii));
 appPRFparamsL{ii} = stim2app(stimParams, attParamsLeft(:,ii));
 end 
-
-for ii = 1:5
+ %% Plot the pRF fits and model prediction
+ % Find a better way to index each subplot (npRFs might and will change)
+for ii = 1:length(attParamsRight)
+    if (1 <= ii) &&  (ii <= 5)
 figure(1);
-subplot(5, 3, 1)
+subplot(5, 3, 2*ii+ii-2)
 scatter(fitParams{ii}(1,:),appPRFparamsR{ii}(1,:))
-subplot(5, 3, 2)
+xlabel('pRF fit X Coord')
+ylabel('AF Model prediction X Coord')
+title(num2str(attParamsRight(1,ii)))
+subplot(5, 3, 2*ii+ii-1)
 scatter(fitParams{ii}(2,:),appPRFparamsR{ii}(2,:))
-subplot(5, 3, 3)
+xlabel('pRF fit Y Coord')
+ylabel('AF Model prediction Y Coord')
+title(num2str(attParamsRight(2,ii)))
+subplot(5, 3, 3*ii)
 scatter(fitParams{ii}(3,:),appPRFparamsR{ii}(3,:))
+xlabel('pRF fit Sigma')
+ylabel('AF Model prediction Sigma')
+title(num2str(attParamsRight(3,ii)))
 hold on
+    end
+    if (6 <= ii) &&  (ii <= 10)
+        jj = ii-5;
+figure(2);
+subplot(5, 3, 2*jj+jj-2)
+scatter(fitParams{ii}(1,:),appPRFparamsR{ii}(1,:))
+xlabel('pRF fit X Coord')
+ylabel('AF Model prediction X Coord')
+title(num2str(attParamsRight(1,ii)))
+subplot(5, 3, 2*jj+jj-1)
+scatter(fitParams{ii}(2,:),appPRFparamsR{ii}(2,:))
+xlabel('pRF fit Y Coord')
+ylabel('AF Model prediction Y Coord')
+title(num2str(attParamsRight(2,ii)))
+subplot(5, 3, 3*jj)
+scatter(fitParams{ii}(3,:),appPRFparamsR{ii}(3,:))
+xlabel('pRF fit Sigma')
+ylabel('AF Model prediction Sigma')
+title(num2str(attParamsRight(3,ii)))
+hold on
+    end
+    if (11 <= ii) && (ii <= 15)
+        jj = ii-10;
+figure(3);
+subplot(5, 3, 2*jj+jj-2)
+scatter(fitParams{ii}(1,:),appPRFparamsR{ii}(1,:))
+xlabel('pRF fit X Coord')
+ylabel('AF Model prediction X Coord')
+title(num2str(attParamsRight(1,ii)))
+subplot(5, 3, 2*jj+jj-1)
+scatter(fitParams{ii}(2,:),appPRFparamsR{ii}(2,:))
+xlabel('pRF fit Y Coord')
+ylabel('AF Model prediction Y Coord')
+title(num2str(attParamsRight(2,ii)))
+subplot(5, 3, 3*jj)
+scatter(fitParams{ii}(3,:),appPRFparamsR{ii}(3,:))
+xlabel('pRF fit Sigma')
+ylabel('AF Model prediction Sigma')
+title(num2str(attParamsRight(3,ii)))
+    end
+    if (16 <= ii) &&  (ii <= 20)
+        jj = ii-15;
+figure(4);
+subplot(5, 3, 2*jj+jj-2)
+scatter(fitParams{ii}(1,:),appPRFparamsR{ii}(1,:))
+xlabel('pRF fit X Coord')
+ylabel('AF Model prediction X Coord')
+title(num2str(attParamsRight(1,ii)))
+subplot(5, 3, 2*jj+jj-1)
+scatter(fitParams{ii}(2,:),appPRFparamsR{ii}(2,:))
+xlabel('pRF fit Y Coord')
+ylabel('AF Model prediction Y Coord')
+title(num2str(attParamsRight(2,ii)))
+subplot(5, 3, 3*jj)
+scatter(fitParams{ii}(3,:),appPRFparamsR{ii}(3,:))
+xlabel('pRF fit Sigma')
+ylabel('AF Model prediction Sigma')
+title(num2str(attParamsRight(3,ii)))
+    end
 end
 %% PLOTS
 % % See how the apparent pRFs change for different stimulus driven pRFs when
