@@ -65,7 +65,7 @@ fitParams= cell(nAFs,1);
 
 for jj = 1:nAFs
     for ii = 1:nPRFs
-        fprintf('Solving pRF for voxel %d of %d\n', ii);
+        fprintf('Solving pRF for voxel %d of attention field %d\n', ii, jj);
         fun = @(p) (RSSR(p,stim,data{jj}(:,ii)));
         fitParams{jj}(:,ii) = fmincon(fun,x0,[],[],[],[],lb,ub);
     end
