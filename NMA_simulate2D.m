@@ -21,10 +21,7 @@ RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*3*RFsd).^2);
 RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*summationsd).^2);
 %% Stimuli
 stim = zeros(npoints,npoints);
-for ind = 1:length(stim)
-    stim(ind:ind+5,ind:ind+5) = 1;
-end
-stim = stim(1:npoints,1:npoints);
+stim(:,450:500) = 1;
 %% Attention field
 attfield = exp(-((X-attx0).^2 +(Y-attx0).^2)./(2*attsd).^2);
 attfield = attgain*attfield  + 1;
@@ -36,40 +33,43 @@ suppdrive = conv2(numerator, RFsupp, 'same');
 %% population response
 popresp = numerator ./ (suppdrive + sigma);
 summation = conv2(popresp, RFsumm, 'same');
+x = linspace(-mxecc,mxecc, npoints);
 if visualize
     fH = figure; clf;
     lw = 3;
     fs = 10;
-    subplot(2,3,1);
-    imagesc(RF);
-    title('RF, center and surround');
+    subplot(2,4,1);
+    imagesc(x,x,RF);
+    title('RF center');
     plotOptions(gca, fs);
-    subplot(2,3,2); 
-    imagesc(attfield);
+    subplot(2,4,2);
+    imagesc(x,x,attfield);
     title('Attention field');
     plotOptions(gca, fs);
-    subplot(2,3,3);
-    imagesc(x, x, stim')
+    subplot(2,4,3);
+    imagesc(x,x,stim)
     title('Stimuli');
     plotOptions(gca, fs);
-    subplot(2,3,4);
+    subplot(2,4,4);
     imagesc(x, x, stimdrive);
     title('Stimulus drive');
     plotOptions(gca, fs);
-    ylabel('Neural population')
-    xlabel('Stimulus')
-    subplot(2,3,5);
+    subplot(2,4,5);
+    imagesc(x, x, numerator);
+    title('Stimulus drive under the attention field');
+    plotOptions(gca, fs);
+    subplot(2,4,6);
     imagesc(x, x, suppdrive);
     title('Suppressive drive');
     plotOptions(gca, fs);
-    ylabel('Neural population')
-    xlabel('Stimulus')
-    subplot(2,3,6);
+    subplot(2,4,7);
     imagesc(x, x, popresp);
     title('Population response');
     plotOptions(gca, fs);
-    ylabel('Neural population')
-    xlabel('Stimulus')
-    set(gcf,'Position',[0 0 600 350])
+    subplot(2,4,8);
+    imagesc(x, x, popresp);
+    title('Population response');
+    plotOptions(gca, fs);
+    set(gcf,'Position',[0 0 1100 450])
 end
 end
