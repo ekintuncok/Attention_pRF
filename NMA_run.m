@@ -44,7 +44,7 @@ for caseidx = 1:numSets
     currCase = params(params(:,1) == caseidx,:,:);
     for subsetPrm = 1:size(currCase,1)
         currSubset = currCase(subsetPrm,:);
-        [x, populationResponse{caseidx}(:,:,subsetPrm), ~] = NMA_simulate(currSubset);
+        [X, Y, populationResponse{caseidx}(:,:,subsetPrm), ~] = NMA_simulate2D(currSubset);
     end
 end
 %%
