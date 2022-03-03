@@ -36,12 +36,9 @@ title('Stimuli');
 plotOptions(gca, fs);
 subplot(1,5,4);
 imagesc(x, x, attpRF);
-title('Stimulus drive');
+title('pRF under the attentional load');
 subplot(1,5,5);
-imagesc(x,x,stim)
-title('Stimuli');
-plotOptions(gca, fs);
-subplot(1,4,4);
-imagesc(x, x, popresponse);
+imagesc(x,x,popresponse)
 title('Population response');
+plotOptions(gca, fs);
 set(gcf,'Position',[0 0 1100 450])

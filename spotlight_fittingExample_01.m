@@ -99,6 +99,6 @@ imagesc(X(:), Y(:), stimpRFs{ii}); axis image xy;
 title('Stim-driven pRF')
 subplot(10,2,2*ii)
 imagesc(X(:), Y(:), apparentpRFs{ii}); axis image xy; 
-title('Parent pRF (Stim-driven pRF * Attentional field)')
+title('Apparent pRF (Stim-driven pRF * Attentional field)')
 end
 set(gcf, 'Position',[0, 1000,1000,1000])
