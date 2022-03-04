@@ -22,17 +22,13 @@ RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*3*RFsd).^2);
 RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*summationsd).^2);
 %% Stimuli
 stim = zeros(npoints,npoints);
-<<<<<<< HEAD
-stim(:,100:230) = 1;
-stim = stim(1:npoints,1:npoints);
-=======
 stim(:,450:500) = 1;
->>>>>>> 0ec7fe632548ee2e365a038697df1a7098c7c0b2
 %% Attention field
 attfield = exp(-((X-attx0).^2 +(Y-atty0).^2)./(2*attsd).^2);
 attfield = attgain*attfield  + 1;
 %% Stimulus and Suppressive Drive
-stimdrive = conv2(stim, RF, 'same');
+% stimdrive = conv2(stim, RF, 'same');
+stimdrive = stim*RF;
 numerator = stimdrive .* (attfield);
 suppdrive = conv2(numerator, RFsupp, 'same');
 
@@ -49,28 +45,28 @@ if visualize
     title('RF center');
     plotOptions(gca, fs);
     subplot(2,4,2);
+    imagesc(x,x,RFsupp);
+    title('RF suppressive surround');
+    plotOptions(gca, fs);
+    subplot(2,4,3);
     imagesc(x,x,attfield);
     title('Attention field');
     plotOptions(gca, fs);
-    subplot(2,4,3);
+    subplot(2,4,4);
     imagesc(x,x,stim)
     title('Stimuli');
     plotOptions(gca, fs);
-    subplot(2,4,4);
+    subplot(2,4,5);
     imagesc(x, x, stimdrive);
     title('Stimulus drive');
     plotOptions(gca, fs);
-    subplot(2,4,5);
+    subplot(2,4,6);
     imagesc(x, x, numerator);
     title('Stimulus drive under the attention field');
     plotOptions(gca, fs);
-    subplot(2,4,6);
+    subplot(2,4,7);
     imagesc(x, x, suppdrive);
     title('Suppressive drive');
-    plotOptions(gca, fs);
-    subplot(2,4,7);
-    imagesc(x, x, popresp);
-    title('Population response');
     plotOptions(gca, fs);
     subplot(2,4,8);
     imagesc(x, x, popresp);
