@@ -1,4 +1,4 @@
-function [x, popresp, summation] = NMA_simulate(params)
+function [x, popresp, summation] = NMA_simulate1D(params)
 
 npoints     = params(2);
 mxecc       = params(3);

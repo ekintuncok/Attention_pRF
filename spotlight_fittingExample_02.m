@@ -1,15 +1,6 @@
 %%%%%% ATTENTION PRF - SIMULATIONS %%%%%
 %%% ET & JW
-%%% last update: 10/2021
-% Simulates BOLD data for a retinotopy experiment for the given stimulus.
-% Simulates RFs for different locations and sizes. 
-% Simulates various attention field locations and sizes
-% This script models endogenous spatial attention as a 
-% 2D attention field model as adapted from Womelsdorf et al
-% (2008) and Klein et al (2014). 
-% AF in different sizes and locations is hypothesized to change the
-% stimulus driven RF parameters. 
-% Runs an fmincon for the simulated and pre
+%%% last update: 02/2022
 setNum = 2;
 saveDir = sprintf('/Volumes/server/Projects/attentionpRF/Simulations/Attention_pRF/set%i_output/', setNum);
 if ~exist(saveDir)
