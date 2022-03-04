@@ -12,7 +12,7 @@ summationsd = 2;
 sigma       = 0.1;
 visualize   = 0;
 attx0       = 0;
-
+atty0       = 0;
 % Condition indices: Code for which set is manipulated. This makes the
 % indexing and plotting with the accurate legend way easier.
 numSets = 4;
@@ -31,10 +31,10 @@ attsd{1}       = 2;
 attsd{2}       = 1:5;
 % We will be using the simulated baseline data with close to zero AF gain
 % to compare the changes in model predictions:
-params = [CombVec(ones,npoints,mxecc,RFsd{1},attgain{1},attx0,attsd{1},summationsd,sigma,0)';...
-    CombVec(RFsize*ones,npoints,mxecc,RFsd{2},attgain{2},attx0,attsd{1},summationsd,sigma,0)';...
-    CombVec(AFgain*ones,npoints,mxecc,RFsd{1},attgain{3},attx0,attsd{1},summationsd,sigma,0)';...
-    CombVec(AFsize*ones,npoints,mxecc,RFsd{1},attgain{2},attx0,attsd{2},summationsd,sigma,0)'];
+params = [combvec(ones,npoints,mxecc,RFsd{1},attgain{1},attx0,atty0,attsd{1},summationsd,sigma,0)';...
+    combvec(RFsize*ones,npoints,mxecc,RFsd{2},attgain{2},attx0,atty0,attsd{1},summationsd,sigma,0)';...
+    combvec(AFgain*ones,npoints,mxecc,RFsd{1},attgain{3},attx0,atty0,attsd{1},summationsd,sigma,0)';...
+    combvec(AFsize*ones,npoints,mxecc,RFsd{1},attgain{2},attx0,atty0,attsd{2},summationsd,sigma,0)'];
 
 RFsizeColidx = 4; AFgainColidx = 5; AFsizeColidx = 7;
 % popresponse = zeros(length(npoints),length(npoints), size(params,1),numSets);
@@ -51,9 +51,11 @@ end
 % pick the locations around the AF (close the far)
 locs  = -6:6;
 stimidx = zeros(size(locs));
+x = linspace(-mxecc,mxecc, npoints);
 for ii = 1:length(locs)
     k = locs(ii);
-    [~, stimidx(ii)] = min(abs(x-(attx0+k)));
+    [~, stimidxX(ii)] = min(abs(x-(attx0+k)));
+    [~, stimidxY(ii)] = min(abs(x-(atty0+k)));
 end
 
 % Baseline vals (we will not be looping through them). N and P stand for
