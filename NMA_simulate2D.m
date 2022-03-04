@@ -5,10 +5,11 @@ mxecc       = params(3);
 RFsd        = params(4);
 attgain     = params(5);
 attx0       = params(6);
-attsd       = params(7);
-summationsd = params(8);
-sigma       = params(9);
-visualize   = params(10);
+atty0       = params(7);
+attsd       = params(8);
+summationsd = params(9);
+sigma       = params(10);
+visualize   = params(11);
 
 %% Space (1D)
 [X,Y] = meshgrid(linspace(-mxecc,mxecc,npoints), linspace(-mxecc,mxecc, npoints));
@@ -21,12 +22,10 @@ RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*3*RFsd).^2);
 RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*summationsd).^2);
 %% Stimuli
 stim = zeros(npoints,npoints);
-for ind = 1:length(stim)
-    stim(ind:ind+5,ind:ind+5) = 1;
-end
+stim(:,100:230) = 1;
 stim = stim(1:npoints,1:npoints);
 %% Attention field
-attfield = exp(-((X-attx0).^2 +(Y-attx0).^2)./(2*attsd).^2);
+attfield = exp(-((X-attx0).^2 +(Y-atty0).^2)./(2*attsd).^2);
 attfield = attgain*attfield  + 1;
 %% Stimulus and Suppressive Drive
 stimdrive = conv2(stim, RF, 'same');
