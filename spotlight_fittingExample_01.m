@@ -1,7 +1,8 @@
+maindir           = '/Volumes/server/Projects/attentionpRF/Simulations/';
 
 mx = @(x) x / max(x(:)); %Because of the small values obtained when AF and RF are multiplied
 % Read in some stimulus apertures
-load('RETBARsmall.mat', 'stim');
+load([fullfile(maindir, 'stimfiles') '/RETBARsmall.mat']);
 stim    = logical(stim);
 rows    = size(stim,1);
 cols    = size(stim,2);

@@ -3,12 +3,14 @@
 %%% last update: 02/2022
 setNum = 2;
 saveDir = sprintf('/Volumes/server/Projects/attentionpRF/Simulations/Attention_pRF/set%i_output/', setNum);
+maindir           = '/Volumes/server/Projects/attentionpRF/Simulations/';
+
 if ~exist(saveDir)
     mkdir(saveDir);
 end
 mx = @(x) x / max(x(:)); %Because of the small values obtained when AF and RF are multiplied
 % Read in some stimulus apertures
-load('RETBARsmall.mat', 'stim');
+load([fullfile(maindir, 'stimfiles') '/RETBARsmall.mat']);
 stim    = logical(stim);
 rows    = size(stim,1);
 cols    = size(stim,2);
