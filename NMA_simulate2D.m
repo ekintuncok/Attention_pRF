@@ -1,77 +1,48 @@
-function [X, Y, popresp, summation] = NMA_simulate2D(params)
+function [X, Y, sptPopResp, pooledPopResp, predTimeSeries] = NMA_simulate2D(maindir, params)
 
-npoints     = params(2);
-mxecc       = params(3);
-RFsd        = params(4);
-attgain     = params(5);
-attx0       = params(6);
-atty0       = params(7);
-attsd       = params(8);
-summationsd = params(9);
-sigma       = params(10);
-visualize   = params(11);
+mxecc       = params(1);
+RFsd        = params(2);
+attgain     = params(3);
+attx0       = params(4);
+atty0       = params(5);
+attsd       = params(6);
+pooledPopRespsd = params(7);
+sigma       = params(8);
 
 %% Space (1D)
-[X,Y] = meshgrid(linspace(-mxecc,mxecc,npoints), linspace(-mxecc,mxecc, npoints));
+step_size = mxecc/50;
+[X,Y] = meshgrid(-mxecc:step_size:mxecc);
+
 %% Neural RFs
 RF = exp(-((X-0).^2 +(Y-0).^2)./(2*RFsd).^2);
-%RF = RF / sum(RF);
-RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*3*RFsd).^2);
-%RFsupp = RFsupp / sum(RFsupp);
-%% Voxel summation (across neurons)
-RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*summationsd).^2);
+RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*1.5*RFsd).^2);
+%% Voxel pooledPopResp (across neurons)
+RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*pooledPopRespsd).^2);
 %% Stimuli
-stim = zeros(npoints,npoints);
-stim(:,450:500) = 1;
+load([fullfile(maindir, 'stimfiles/') 'stim.mat'])
+stim    = stim(:,:,1:end-1);
+stim    = logical(stim);
+
+inputStimStim = zeros(size(X,1),size(X,1),size(stim,3));
+for s = 1:size(stim,3)
+    inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
+end
+
 %% Attention field
 attfield = exp(-((X-attx0).^2 +(Y-atty0).^2)./(2*attsd).^2);
 attfield = attgain*attfield  + 1;
+
 %% Stimulus and Suppressive Drive
-% stimdrive = conv2(stim, RF, 'same');
-stimdrive = stim*RF;
+stimdrive = convn(inputStim, RF, 'same');
 numerator = stimdrive .* (attfield);
-suppdrive = conv2(numerator, RFsupp, 'same');
+suppdrive = convn(numerator, RFsupp, 'same');
 
 %% population response
-popresp = numerator ./ (suppdrive + sigma);
-summation = conv2(popresp, RFsumm, 'same');
-x = linspace(-mxecc,mxecc, npoints);
-if visualize
-    fH = figure; clf;
-    lw = 3;
-    fs = 10;
-    subplot(2,4,1);
-    imagesc(x,x,RF);
-    title('RF center');
-    plotOptions(gca, fs);
-    subplot(2,4,2);
-    imagesc(x,x,RFsupp);
-    title('RF suppressive surround');
-    plotOptions(gca, fs);
-    subplot(2,4,3);
-    imagesc(x,x,attfield);
-    title('Attention field');
-    plotOptions(gca, fs);
-    subplot(2,4,4);
-    imagesc(x,x,stim)
-    title('Stimuli');
-    plotOptions(gca, fs);
-    subplot(2,4,5);
-    imagesc(x, x, stimdrive);
-    title('Stimulus drive');
-    plotOptions(gca, fs);
-    subplot(2,4,6);
-    imagesc(x, x, numerator);
-    title('Stimulus drive under the attention field');
-    plotOptions(gca, fs);
-    subplot(2,4,7);
-    imagesc(x, x, suppdrive);
-    title('Suppressive drive');
-    plotOptions(gca, fs);
-    subplot(2,4,8);
-    imagesc(x, x, popresp);
-    title('Population response');
-    plotOptions(gca, fs);
-    set(gcf,'Position',[0 0 1100 450])
-end
+sptPopResp = numerator ./ (suppdrive + sigma);
+pooledPopResp = convn(sptPopResp, RFsumm, 'same');
+% close all;for s = 1 : size(pooledPopResp,3); imagesc(pooledPopResp(:,:,s)); pause(1); end
+% Go across time for a specific location in the pop response,let's say x =
+% 1, y = 2. 
+predTimeSeries = reshape(pooledPopResp,[size(pooledPopResp,1)*size(pooledPopResp,2) size(pooledPopResp,3)]);
+
 end

@@ -34,37 +34,39 @@ pred = rfs_nofit'*newim1d;
 % get the beta vals for regions of interest
 datafiles = dir(fullfile(maindir, 'fitData','*.mat'));
 load([datafiles.folder '/' datafiles.name]);
-
 % preallocate
-sigma = zeros(size(data,1),1);
-pa    = zeros(size(data,1),1);
-ecc   = zeros(size(data,1),1);
-R     = zeros(size(data,1),1);
-
-for v = 1:size(data)
-    
-    mybeta = data(v,:,5);
-    
-    % Calculates the correlation between the actual beta weights and
-    % the predicted beta weights
-    [val,ind] = max(corr(mybeta',pred'));
-    
-    % if the correlation is lower than 0.2, fill in NaNs
-    if val < 0.2
-        sigma(v) = NaN;
-        pa(v) =  NaN;
-        ecc(v) = NaN;
-        R(v) = NaN;
-    else
-        tmpx = RFIndices(2,ind);
-        tmpy = RFIndices(3,ind);
+sigma = zeros(size(data,1),size(data,3));
+pa    = zeros(size(data,1),size(data,3));
+ecc   = zeros(size(data,1),size(data,3));
+R     = zeros(size(data,1),size(data,3));
+xCoord = zeros(size(data,1),size(data,3));
+yCoord = zeros(size(data,1),size(data,3));
+for attCond = 1:size(data,3)
+    for v = 1:size(data)
         
-        sigma(v) = RFIndices(1,ind);
-        % convert the coordinate vals to polar angle and eccentricity
-        pa(v) =  atan2(-tmpy,tmpx);
-        ecc(v) = sqrt(tmpx.^2+tmpy.^2);
-        % saves the correlation coeff for each voxel
-        R(v) = val;
+        mybeta = data(v,:,attCond);
+        
+        % Calculates the correlation between the actual beta weights and
+        % the predicted beta weights
+        [val,ind] = max(corr(mybeta',pred'));
+        
+        % if the correlation is lower than 0.2, fill in NaNs
+        if val < 0.2
+            sigma(v,attCond) = NaN;
+            pa(v,attCond) =  NaN;
+            ecc(v,attCond) = NaN;
+            R(v,attCond) = NaN;
+        else
+            xCoord(v,attCond) = RFIndices(2,ind);
+            yCoord(v, attCond) = RFIndices(3,ind);
+            
+            sigma(v,attCond) = RFIndices(1,ind);
+            % convert the coordinate vals to polar angle and eccentricity
+            pa(v,attCond) =  atan2(-xCoord(v,attCond),yCoord(v,attCond));
+            ecc(v,attCond) = sqrt(xCoord(v,attCond).^2+yCoord(v,attCond).^2);
+            % saves the correlation coeff for each voxel
+            R(v,attCond) = val;
+        end
     end
 end
 figure(1)

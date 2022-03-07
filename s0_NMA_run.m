@@ -1,6 +1,6 @@
 addpath(genpath(aprfRootPath))
+maindir     = '/Volumes/server/Projects/attentionpRF/Simulations/';
 
-npoints     = 1001;
 mxecc       = 10;
 summationsd = 2;
 sigma       = 0.1;
@@ -10,6 +10,6 @@ atty0       = 0;
 RFsd        = 1;
 attsd       = 1.5;
 attgain     = 2;
-params      = [ones, npoints,mxecc,RFsd,attgain,attx0,atty0,attsd,summationsd,sigma,1];
+params      = [mxecc,RFsd,attgain,attx0,atty0,attsd,summationsd,sigma];
 
-[X, Y, popresp, summation] = NMA_simulate2D(params);
+[X, Y, sptPopResp, pooledPopResp, predTimeSeries] = NMA_simulate2D(maindir, params);
