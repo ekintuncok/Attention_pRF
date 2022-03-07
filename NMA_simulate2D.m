@@ -1,4 +1,4 @@
-function [X, Y, sptPopResp, pooledPopResp, predTimeSeries] = NMA_simulate2D(maindir, params)
+function [X, Y, stim, sptPopResp, pooledPopResp, predTimeSeries] = NMA_simulate2D(maindir, params)
 
 mxecc       = params(1);
 RFsd        = params(2);
@@ -23,17 +23,18 @@ load([fullfile(maindir, 'stimfiles/') 'stim.mat'])
 stim    = stim(:,:,1:end-1);
 stim    = logical(stim);
 
-inputStimStim = zeros(size(X,1),size(X,1),size(stim,3));
+inputStim = zeros(size(X,1),size(X,1),size(stim,3));
 for s = 1:size(stim,3)
     inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
 end
-
+close all, for ii = 1:size(inputStim,3), imagesc(inputStim(:,:,ii)), pause(0.5), end
 %% Attention field
 attfield = exp(-((X-attx0).^2 +(Y-atty0).^2)./(2*attsd).^2);
 attfield = attgain*attfield  + 1;
 
 %% Stimulus and Suppressive Drive
 stimdrive = convn(inputStim, RF, 'same');
+% stimdrive = inputStim.*RF;
 numerator = stimdrive .* (attfield);
 suppdrive = convn(numerator, RFsupp, 'same');
 
