@@ -9,6 +9,9 @@ attsd       = params(6);
 pooledPopRespsd = params(7);
 sigmaNorm       = params(8);
 
+%% Space (1D)
+step_size = mxecc/50;
+[X,Y] = meshgrid(-mxecc:step_size:mxecc);
 
 %% Stimuli
 load([fullfile(maindir, 'stimfiles/') 'stim.mat'])
@@ -19,9 +22,6 @@ inputStim = zeros(size(X,1),size(X,1),size(stim,3));
 for s = 1:size(stim,3)
     inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
 end
-%% Space (1D)
-step_size = mxecc/50;
-[X,Y] = meshgrid(-mxecc:step_size:mxecc);
 
 %% Neural RFs
 RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*1.5*RFsd).^2);
