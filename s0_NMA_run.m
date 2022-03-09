@@ -16,7 +16,7 @@ params      = [mxecc,RFsd,0,0,atty0,attsd,summationsd,sigma];
 
 for cond = 1:length(attx0locs)
     params      = [mxecc,RFsd,attgain,attx0locs(cond),atty0,attsd,summationsd,sigma];
-    [X, Y, stim, sptPopResp(:,:,:,cond), pooledPopResp(:,:,:,cond), predTimeSeries(:,:,cond)] = NMA_simulate2D(maindir, params);
+    [X, Y, stim, sptPopResp(:,:,:,cond), pooledPopResp(:,:,:,cond), predneuralweights(:,:,cond), predsummedweights(:,:,cond)] = NMA_simulate2D(maindir, params);
 end
 
 iter = 1;

@@ -17,7 +17,7 @@ mask = Ecc_lim < 12.4;
 RFIndices = RFIndices(:,mask);
 
 [X, Y] = meshgrid(-stim_ecc:step_size:stim_ecc);
-rfs_nofit=rfGaussian2d(X(:),Y(:),RFIndices(1,:),RFIndices(1,:),0,RFIndices(2,:),RFIndices(3,:));
+rfs_nofit = rfGaussian2d(X(:),Y(:),RFIndices(1,:),RFIndices(1,:),0,RFIndices(2,:),RFIndices(3,:));
 % rfsimg = reshape(rfs_nofit,[size(X,1) size(X,1) size(rfs_nofit,2)]);
 % close all;for s = 1 : 100: size(rfsimg,3); imagesc(rfsimg(:,:,s)); pause(0.05); end
 
