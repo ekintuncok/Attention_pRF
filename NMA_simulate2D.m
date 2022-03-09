@@ -103,19 +103,19 @@ end
 % end
 % 
 
-close all
-iter =1;
-figure;
-for ind = 1:500:size(stimdrive,1)
-    subplot(4,5,iter)
-    plot(stimdrive(ind,:))
-    hold on
-    plot(numerator(ind,:))
-    if iter == 1
-        legend('with attention', 'without attention')
-    end
-    iter = iter +1;
-end
+% close all
+% iter =1;
+% figure;
+% for ind = 1:500:size(stimdrive,1)
+%     subplot(4,5,iter)
+%     plot(stimdrive(ind,:))
+%     hold on
+%     plot(numerator(ind,:))
+%     if iter == 1
+%         legend('with attention', 'without attention')
+%     end
+%     iter = iter +1;
+% end
 
 
 %% old part
