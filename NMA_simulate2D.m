@@ -73,6 +73,7 @@ for rfind = 1:size(stimdrivenRFs,2)
         % get the stim driven RF 
         RF = exp(-((X-(stimdrivenRFs(1,rfind))).^2 + ...
             (Y-(stimdrivenRFs(2,rfind))).^2)./(2*(stimdrivenRFs(3,rfind))).^2);
+         RF = RF./sum(RF(:));
         % impose the attention field
         RFattn = RF .* attfield;
         % get the stimulus vectorized
