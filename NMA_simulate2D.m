@@ -49,13 +49,15 @@ for pRFInd = 1:nPRFs
     % assign the sigma value based on the distance. The distance here is a
     % proxy of eccentricity (it's actually the literal definition of it!)
     eccen = sqrt(currCenter(1).^2 + currCenter(2).^2);
-    for eccenInd = 1:length(sampleEccen)
-        thisEccen = eccen <= sampleEccen(eccenInd);
-        if thisEccen == 1
-            stimdrivenRFs(3,pRFInd) = sigma(eccenInd);
-            break
-        end
-    end
+    stimdrivenRFs(3,pRFInd) = 0.05 + 0.1*eccen;
+    continue
+    %for eccenInd = 1:length(sampleEccen)
+        %thisEccen = eccen <= sampleEccen(eccenInd);
+        %if thisEccen == 1
+            %stimdrivenRFs(3,pRFInd) = sigma(eccenInd);
+            %break
+        %end
+    %end
 end
 
 %% Attention field
