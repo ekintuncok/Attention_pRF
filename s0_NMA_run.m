@@ -10,7 +10,7 @@ attx0locs   = [-5, 5];
 atty0       = 0;
 RFsd        = 1;
 attsd       = 1.5;
-attgain     = 2;
+attgain     = 20;
 
 params      = [mxecc,RFsd,0,0,atty0,attsd,summationsd,sigma];
 [X, Y,~ , ~, ~, baselineresponse] = NMA_simulate2D(maindir, params);
