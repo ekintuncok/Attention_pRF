@@ -1,5 +1,6 @@
-maindir     = '/Volumes/server/Projects/attentionpRF/Simulations/';
-addpath(genpath(maindir))
+%maindir     = '/Volumes/server/Projects/attentionpRF/Simulations/';
+%addpath(genpath(maindir))
+maindir = './';
 
 mxecc       = 10;
 summationsd = 2;
