@@ -3,21 +3,20 @@
 maindir = './';
 
 mxecc       = 10;
-summationsd = 2;
 sigma       = 0.1;
-visualize   = 1;
 attx0locs   = [-5, 5];
 atty0       = 0;
 RFsd        = 1;
 attsd       = 1.5;
 attgain     = 20;
+visualize   = 1;
 
-params      = [mxecc,RFsd,0,0,atty0,attsd,summationsd,sigma];
+params      = [mxecc,RFsd,0,0,atty0,attsd,sigma,visualize];
 [X, Y,~ , ~, ~, baselineresponse] = NMA_simulate2D(maindir, params);
 
 for cond = 1:length(attx0locs)
-    params      = [mxecc,RFsd,attgain,attx0locs(cond),atty0,attsd,summationsd,sigma];
-    [X, Y, stim, sptPopResp(:,:,:,cond), pooledPopResp(:,:,:,cond), predneuralweights(:,:,cond), predsummedweights(:,:,cond)] = NMA_simulate2D(maindir, params);
+    params      = [mxecc,RFsd,attgain,attx0locs(cond),atty0,attsd,sigma,visualize];
+    [X, Y, stim, sptPopResp(:,:,:,cond), pooledPopResp(:,:,:,cond), predneuralweights(:,:,cond)] = NMA_simulate2D(maindir, params);
 end
 
 iter = 1;
