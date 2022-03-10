@@ -22,12 +22,12 @@ end
 
 iter = 1;
 figure;
-neurons =floor(linspace(1,length(predTimeSeries), 50));
+neurons =floor(linspace(1,length(predneuralweights), 50));
 for ind = neurons
     subplot(5,10,iter)
-    plot(predTimeSeries(ind,:,1))
+    plot(predneuralweights(ind,:,1))
     hold on
-    plot(predTimeSeries(ind,:,2))
+    plot(predneuralweights(ind,:,2))
     hold on 
     plot(baselineresponse(ind,:))
     if iter == 1
@@ -38,16 +38,16 @@ end
 
 figure
 subplot(2,2,1)
-plot(predTimeSeries(:,12,1))
+plot(predneuralweights(:,12,1))
 hold on
-plot(predTimeSeries(:,12,2))
+plot(predneuralweights(:,12,2))
 hold on 
 plot(baselineresponse(:,12))
 legend('attend left','attend right','sensory RF')
 subplot(2,2,2)
-plot(predTimeSeries(:,30,1))
+plot(predneuralweights(:,30,1))
 hold on
-plot(predTimeSeries(:,30,2))
+plot(predneuralweights(:,30,2))
 hold on 
 plot(baselineresponse(:,30))
 subplot(2,2,3)
@@ -70,6 +70,6 @@ imagesc(sptPopResp(:,:,32,2))
 % 
 figure;
 subplot(1,2,1)
-plot((baselineresponse-predTimeSeries(:,:,1))')
+plot((baselineresponse-predneuralweights(:,:,1))')
 subplot(1,2,2)
-plot((baselineresponse-predTimeSeries(:,:,2))')
+plot((baselineresponse-predneuralweights(:,:,2))')
