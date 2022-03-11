@@ -18,6 +18,7 @@ params      = [mxecc,RFsd,0,0,atty0,attsd,summationsd,sigma];
 for cond = 1:length(attx0locs)
     params      = [mxecc,RFsd,attgain,attx0locs(cond),atty0,attsd,summationsd,sigma];
     [X, Y, stim, sptPopResp(:,:,:,cond), pooledPopResp(:,:,:,cond), predneuralweights(:,:,cond), predsummedweights(:,:,cond)] = NMA_simulate2D(maindir, params);
+    dumoulinNeural(:,:,cond) = NMA_dumoulin_simulate2D(maindir, params);
 end
 
 iter = 1;
@@ -69,7 +70,15 @@ imagesc(sptPopResp(:,:,32,2))
 % 
 % 
 figure;
-subplot(1,2,1)
-plot((baselineresponse-predneuralweights(:,:,1))')
-subplot(1,2,2)
-plot((baselineresponse-predneuralweights(:,:,2))')
+subplot(2,2,1)
+plot((predneuralweights(:,:,1)-baselineresponse)')
+title('Macro norm - attend left');
+subplot(2,2,2)
+plot((predneuralweights(:,:,2)-baselineresponse)')
+title('Macro norm - attend right');
+subplot(2,2,3)
+plot((dumoulinNeural(:,:,1)-baselineresponse)')
+title('Dumoulin norm - attend left');
+subplot(2,2,4)
+plot((dumoulinNeural(:,:,2)-baselineresponse)')
+title('Dumoulin norm - attend right');
