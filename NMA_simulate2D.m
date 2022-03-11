@@ -10,21 +10,32 @@ pooledPopRespsd = params(7);
 sigmaNorm       = params(8);
 
 %% Space (1D)
-step_size = mxecc/50;
-[X,Y] = meshgrid(-mxecc:step_size:mxecc);
+step_size = mxecc/25;
+ecc = linspace(-5,5,64);
+[X,Y] = meshgrid(ecc);
 
 %% Stimuli
 load([fullfile(maindir, 'stimfiles/') 'stim.mat'])
 stim    = stim(:,:,1:end-1);
 stim    = logical(stim);
-
+% pad stimulus with zeros to avoid edge artifacts
 inputStim = zeros(size(X,1),size(X,1),size(stim,3));
+fullSize = size(X,1);
+stimSize = fullSize-(0.25*fullSize);
+imStart = fullSize/2-(stimSize/2);
+imEnd = imStart+stimSize-1;
+imIdx = imStart:imEnd;
 for s = 1:size(stim,3)
-    inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
+    inputStim(imIdx,imIdx,s) = imresize(stim(:,:,s),[stimSize stimSize],'nearest');
 end
 
+%inputStim = zeros(size(X,1),size(X,1),size(stim,3));
+%for s = 1:size(stim,3)
+    %inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
+%end
+
 %% Neural RFs
-RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*1.5*RFsd).^2);
+RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*1.5*RFsd).^2); RFsupp = RFsupp./sum(RFsupp(:));
 %% Voxel pooledPopResp (across neurons)
 RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*pooledPopRespsd).^2); %%% keep in mmind
 nCenters    = size(inputStim,1);
@@ -129,7 +140,7 @@ suppdrive = convn(numerator_pop, RFsupp, 'same');
 
 %% population response
 sptPopResp = numerator_pop ./ (suppdrive + sigmaNorm);
-close all, for ii = 1:size(sptPopResp,3), imagesc(sptPopResp(:,:,ii)), pause(0.5), end
+%close all, for ii = 1:size(sptPopResp,3), imagesc(sptPopResp(:,:,ii)), pause(0.5), end
 
 pooledPopResp = convn(sptPopResp, RFsumm, 'same');
 % Go across time for a specific location in the pop response,let's say x =
