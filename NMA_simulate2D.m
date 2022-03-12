@@ -1,4 +1,4 @@
-function [X, Y, inputStim, sptPopResp, predneuralweights] = NMA_simulate2D(maindir, params)
+% function [X, Y, inputStim, sptPopResp, predneuralweights] = NMA_simulate2D(maindir, params)
 
 mxecc       = params(1);
 RFsd        = params(2);
@@ -10,22 +10,30 @@ sigmaNorm   = params(7);
 visualize   = params(8);
 
 %% Space (1D)
-step_size = mxecc/50;
-[X,Y] = meshgrid(-mxecc:step_size:mxecc);
+step_size = mxecc/25;
+ecc = linspace(-5,5,64);
+[X,Y] = meshgrid(ecc);
 
 %% Stimuli
 stimtemp = load([fullfile(maindir, 'stimfiles/') 'stim.mat']);
 stim    = stimtemp.stim(:,:,1:end-1);
 stim    = logical(stim);
-
+% pad stimulus with zeros to avoid edge artifacts
 inputStim = zeros(size(X,1),size(X,1),size(stim,3));
+fullSize = size(X,1);
+stimSize = fullSize-(0.25*fullSize);
+imStart = fullSize/2-(stimSize/2);
+imEnd = imStart+stimSize-1;
+imIdx = imStart:imEnd;
 for s = 1:size(stim,3)
-    inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
+    inputStim(imIdx,imIdx,s) = imresize(stim(:,:,s),[stimSize stimSize],'nearest');
 end
 
-%% Neural RFs
-%% Voxel pooledPopResp (across neurons)
-% RFsumm = exp(-((X-0).^2 +(Y-0).^2)./(2*pooledPopRespsd).^2); %%% keep in mmind
+%inputStim = zeros(size(X,1),size(X,1),size(stim,3));
+%for s = 1:size(stim,3)
+    %inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
+%end
+
 nCenters    = size(inputStim,1);
 x           = linspace(-8.8,8.8,nCenters);
 y           = linspace(-8.8,8.8,nCenters);
@@ -37,15 +45,10 @@ catch
     nPRFs       = size(CombVec(x,y),2);
     stimdrivenRFs = CombVec(x,y);
 end
-% numSigmas   = 10;
-% sigma       = linspace(0.1,5,numSigmas); % in degrees of visual field
-% maxEccen    = sqrt(x(1).^2 + y(1).^2);
-% sampleEccen = linspace(0,maxEccen,numSigmas);
 
 % If we keep the x- and y- axes range (look a line up) at [-10 to 10] our
 % max eccentricity goes up to 14 degrees. Now we need to assign our sigma
 % value accordingly.
-
 
 for pRFInd = 1:nPRFs
     currCenter = stimdrivenRFs(1:2,pRFInd);
@@ -54,14 +57,6 @@ for pRFInd = 1:nPRFs
     % proxy of eccentricity (it's actually the literal definition of it!)
     eccen = sqrt(currCenter(1).^2 + currCenter(2).^2);
     stimdrivenRFs(3,pRFInd) = 0.05 + 0.1*eccen;
-    continue
-    %for eccenInd = 1:length(sampleEccen)
-    %thisEccen = eccen <= sampleEccen(eccenInd);
-    %if thisEccen == 1
-    %stimdrivenRFs(3,pRFInd) = sigma(eccenInd);
-    %break
-    %end
-    %end
 end
 
 %% Attention field
@@ -70,84 +65,67 @@ attfield = attgain*attfield  + 1;
 
 %% Stimulus and Suppressive Drive
 stimdrive = zeros(size(stimdrivenRFs,2),size(inputStim,3));
-numerator = zeros(size(stimdrivenRFs,2),size(inputStim,3));
-
-for rfind = 1:size(stimdrivenRFs,2)
-    for ii = 1:size(inputStim,3)
+numeratorVec = zeros(size(stimdrivenRFs,2),size(inputStim,3));
+suppressivedriveRF = zeros(size(stimdrivenRFs,2),size(stimdrivenRFs,2),size(inputStim,3));
+for ii = 1:size(inputStim,3)
+    for rfind = 1:size(stimdrivenRFs,2)
         % get the stim driven RF
         RF = exp(-((X-(stimdrivenRFs(1,rfind))).^2 + ...
             (Y-(stimdrivenRFs(2,rfind))).^2)./(2*(stimdrivenRFs(3,rfind))).^2);
         RF = RF./sum(RF(:));
-        % impose the attention field
-        RFattn = RF .* attfield;        
-        RFattn = RFattn./sum(RFattn(:));
+        
         % get the stimulus vectorized
         stim = inputStim(:,:,ii);
         stim = stim(:);
         stimdrive(rfind, ii) = RF(:)'*stim;
-        numerator(rfind, ii) = RFattn(:)'*stim;
+        %         denominator = RFsupp(:)'*numerator;
+    end
+    numeratorVec(:,ii) = stimdrive(:,ii).*attfield(:);
+    for rfsuppind = 1:size(stimdrivenRFs,2)
+        RFnorm = exp(-((X-(stimdrivenRFs(1,rfsuppind))).^2 + ...
+            (Y-(stimdrivenRFs(2,rfsuppind))).^2)./(2*2*(stimdrivenRFs(3,rfsuppind))).^2);
+        RFnorm = RFnorm./sum(RFnorm(:)); % unit volume
+        suppressivedriveRF(:, rfind, ii) = RFnorm(:).*numeratorVec(:,ii); 
     end
 end
 
-for rfind = 1:size(stimdrivenRFs,2)
-    for ii = 1:size(numerator,2)
-        RFsupp = exp(-((X-(stimdrivenRFs(1,rfind))).^2 +...
-            (Y-(stimdrivenRFs(2,rfind))).^2)./(2*1.5*(stimdrivenRFs(3,rfind))).^2);
-        RFsupp = RFsupp./sum(RFsupp(:));
-        numeratortmp = numerator(:,ii);
-        suppdrive(rfind, ii) = RFsupp(:)'*numeratortmp;
+for stimind = 1:size(inputStim,3)   
+    for rfind = 1:size(stimdrivenRFs,2)
+        thisRFsupp(:,rfind) = squeeze(suppressivedriveRF(:,rfind,stimind));
+        suppressivedriveImg(:,:,rfind) = reshape(thisRFsupp(:,rfind), [size(inputStim,1), size(inputStim,2)]);
     end
+    suppressivedrivepop(:,:,stimind) = sum(suppressivedriveImg, 3);
 end
 
-stimdrive_pop = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
-numerator_pop = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
-suppdrive_pop = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
+stimdriveIm = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
+numeratorIm = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
 
 for s = 1:size(stimdrive,2)
-    stimdrive_pop(:,:,s) = reshape(stimdrive(:,s), [size(inputStim,1) size(inputStim,2)]);
-    numerator_pop(:,:,s) = reshape(numerator(:,s), [size(inputStim,1) size(inputStim,2)]);
-    suppdrive_pop(:,:,s) = reshape(suppdrive(:,s), [size(inputStim,1) size(inputStim,2)]);
+    stimdriveIm(:,:,s) = reshape(stimdrive(:,s), [size(inputStim,1) size(inputStim,2)]);
+    numeratorIm(:,:,s) = reshape(numeratorVec(:,s), [size(inputStim,1) size(inputStim,2)]);
 end
-%
-% close all
-% figure
-% for s = 1:size(stimdrive,2)
-%     imagesc(stimdrive_pop(:,:,s))
-%     pause(1)
-% end
-% 
-% close all
-% figure
-% for s = 1:size(stimdrive,2)
-%     imagesc(numerator_pop(:,:,s))
-%     pause(0.5)
-% end
-%
-
-% close all
-% iter =1;
-% figure;
-% for ind = 1:500:size(stimdrive,1)
-%     subplot(4,5,iter)
-%     plot(stimdrive(ind,:))
-%     hold on
-%     plot(numerator(ind,:))
-%     if iter == 1
-%         legend('with attention', 'without attention')
-%     end
-%     iter = iter +1;
-% end
+close all
+figure
+for s = 1:size(stimdrive,2)
+    subplot(1,3,1)
+    imagesc(stimdriveIm(:,:,s))
+    subplot(1,3,2)
+    imagesc(numeratorIm(:,:,s))
+    subplot(1,3,3)
+    imagesc(suppressivedrivepop(:,:,s))
+    pause(0.5)
+end
 
 %% population response
-numerator_pop = cat(3, numerator_pop(:,:,25:end), numerator_pop(:,:,1:24));
-sptPopResp = numerator_pop ./ (suppdrive_pop + sigmaNorm);
+sptPopResp = numeratorIm ./ (suppressivedrivepop + sigmaNorm);
 if visualize
     close all, for ii = 1:size(sptPopResp,3), imagesc(sptPopResp(:,:,ii)), pause(0.5), end
 end
+%close all, for ii = 1:size(sptPopResp,3), imagesc(sptPopResp(:,:,ii)), pause(0.5), end
 
 % pooledPopResp = convn(sptPopResp, RFsumm, 'same');
 % Go across time for a specific location in the pop response,let's say x =
 % 1, y = 2.
 predneuralweights = reshape(sptPopResp,[size(sptPopResp,1)*size(sptPopResp,2) size(sptPopResp,3)]);
 % predsummedweights = reshape(pooledPopResp,[size(pooledPopResp,1)*size(pooledPopResp,2) size(pooledPopResp,3)]);
-end
+% end
