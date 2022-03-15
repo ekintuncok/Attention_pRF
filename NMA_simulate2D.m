@@ -1,13 +1,12 @@
 % function [X, Y, inputStim, sptPopResp, predneuralweights] = NMA_simulate2D(maindir, params)
 
 mxecc       = params(1);
-RFsd        = params(2);
-attgain     = params(3);
-attx0       = params(4);
-atty0       = params(5);
-attsd       = params(6);
-sigmaNorm   = params(7);
-visualize   = params(8);
+attgain     = params(2);
+attx0       = params(3);
+atty0       = params(4);
+attsd       = params(5);
+sigmaNorm   = params(6);
+visualize   = params(7);
 
 %% Space (1D)
 step_size = mxecc/25;
@@ -78,7 +77,6 @@ for ii = 1:size(inputStim,3)
         stim = inputStim(:,:,ii);
         stim = stim(:);
         stimdrive(rfind, ii) = RF(:)'*stim;
-        %         denominator = RFsupp(:)'*numerator;
     end
     numeratorVec(:,ii) = stimdrive(:,ii).*attfield(:);
     for rfsuppind = 1:size(stimdrivenRFs,2)
@@ -109,10 +107,13 @@ figure
 for s = 1:size(stimdrive,2)
     subplot(1,3,1)
     imagesc(stimdriveIm(:,:,s))
+    title('Stimulus drive')
     subplot(1,3,2)
     imagesc(numeratorIm(:,:,s))
+    title('Numerator (stimulus drive.*attfield)')
     subplot(1,3,3)
     imagesc(suppressivedrivepop(:,:,s))
+    title('Suppressive drive')
     pause(0.5)
 end
 

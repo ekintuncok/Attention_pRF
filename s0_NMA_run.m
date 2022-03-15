@@ -6,7 +6,6 @@ mxecc       = 10;
 sigma       = 0.1;
 attx0locs   = [-5, 5];
 atty0       = 0;
-RFsd        = 1;
 attsd       = 1.5;
 attgain     = 20;
 visualize   = 0;
@@ -15,7 +14,7 @@ params      = [mxecc,RFsd,0,0,atty0,attsd,sigma,visualize];
 [X, Y, stim, baselineSpatialResponse, baselinepredneuralweights] = NMA_simulate2D(maindir, params);
 
 for cond = 1:length(attx0locs)
-     params      = [mxecc,RFsd,attgain,attx0locs(cond),atty0,attsd,sigma,visualize];
+     params      = [mxecc,attgain,attx0locs(cond),atty0,attsd,sigma,visualize];
     [X, Y, stim, sptPopResp(:,:,:,cond), predneuralweights(:,:,cond)] = NMA_simulate2D(maindir, params);
 %     params      = [mxecc,RFsd,attgain,attx0locs(cond),atty0,attsd,summationsd,sigma];
 %     
