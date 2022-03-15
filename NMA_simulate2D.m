@@ -1,4 +1,4 @@
-% function [X, Y, inputStim, sptPopResp, predneuralweights] = NMA_simulate2D(maindir, params)
+function [stimdriveIm, numeratorIm, suppIm, sptPopResp, predneuralweights] = NMA_simulate2D(maindir, params)
 
 mxecc       = params(1);
 attgain     = params(2);
@@ -27,11 +27,8 @@ imIdx = imStart:imEnd;
 for s = 1:size(stim,3)
     inputStim(imIdx,imIdx,s) = imresize(stim(:,:,s),[stimSize stimSize],'nearest');
 end
-
-%inputStim = zeros(size(X,1),size(X,1),size(stim,3));
-%for s = 1:size(stim,3)
-    %inputStim(:,:,s) = imresize(stim(:,:,s),[size(X,1) size(X,1)],'nearest');
-%end
+flatten     = @(x) reshape(x, fullSize*fullSize, []);
+unflatten   = @(x) reshape(x, fullSize, fullSize, []);
 
 nCenters    = size(inputStim,1);
 x           = linspace(-8.8,8.8,nCenters);
@@ -51,9 +48,6 @@ end
 
 for pRFInd = 1:nPRFs
     currCenter = stimdrivenRFs(1:2,pRFInd);
-    % calculate the euclidean distance from the center of gaze (origin) to
-    % assign the sigma value based on the distance. The distance here is a
-    % proxy of eccentricity (it's actually the literal definition of it!)
     eccen = sqrt(currCenter(1).^2 + currCenter(2).^2);
     stimdrivenRFs(3,pRFInd) = 0.05 + 0.1*eccen;
 end
@@ -61,11 +55,12 @@ end
 %% Attention field
 attfield = exp(-((X-attx0).^2 +(Y-atty0).^2)./(2*attsd).^2);
 attfield = attgain*attfield  + 1;
+attfield = flatten(attfield);
 
 %% Stimulus and Suppressive Drive
 stimdrive = zeros(size(stimdrivenRFs,2),size(inputStim,3));
 numeratorVec = zeros(size(stimdrivenRFs,2),size(inputStim,3));
-suppressivedriveRF = zeros(size(stimdrivenRFs,2),size(stimdrivenRFs,2),size(inputStim,3));
+respSurround = zeros(size(stimdrivenRFs,2),size(inputStim,3));
 for ii = 1:size(inputStim,3)
     for rfind = 1:size(stimdrivenRFs,2)
         % get the stim driven RF
@@ -78,55 +73,26 @@ for ii = 1:size(inputStim,3)
         stim = stim(:);
         stimdrive(rfind, ii) = RF(:)'*stim;
     end
-    numeratorVec(:,ii) = stimdrive(:,ii).*attfield(:);
-    for rfsuppind = 1:size(stimdrivenRFs,2)
-        RFnorm = exp(-((X-(stimdrivenRFs(1,rfsuppind))).^2 + ...
-            (Y-(stimdrivenRFs(2,rfsuppind))).^2)./(2*2*(stimdrivenRFs(3,rfsuppind))).^2);
-        RFnorm = RFnorm./sum(RFnorm(:)); % unit volume
-        suppressivedriveRF(:, rfind, ii) = RFnorm(:).*numeratorVec(:,ii); 
-    end
-end
-
-for stimind = 1:size(inputStim,3)   
+    numeratorVec(:,ii) = stimdrive(:,ii).*attfield;
+    
     for rfind = 1:size(stimdrivenRFs,2)
-        thisRFsupp(:,rfind) = squeeze(suppressivedriveRF(:,rfind,stimind));
-        suppressivedriveImg(:,:,rfind) = reshape(thisRFsupp(:,rfind), [size(inputStim,1), size(inputStim,2)]);
+        distance = sqrt((X-stimdrivenRFs(1,rfind)).^2+(Y-stimdrivenRFs(2,rfind)).^2);
+        % find the weights for the surround
+        supp = exp(-.5*(distance/(stimdrivenRFs(3,rfind)*2)).^2);
+        supp = supp / sum(supp(:));
+        flatsurr = flatten(supp);
+        respSurround(rfind,ii) = flatsurr' * numeratorVec(:,ii);
     end
-    suppressivedrivepop(:,:,stimind) = sum(suppressivedriveImg, 3);
 end
 
-stimdriveIm = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
-numeratorIm = zeros(size(inputStim,1),size(inputStim,2),size(inputStim,3));
-
-for s = 1:size(stimdrive,2)
-    stimdriveIm(:,:,s) = reshape(stimdrive(:,s), [size(inputStim,1) size(inputStim,2)]);
-    numeratorIm(:,:,s) = reshape(numeratorVec(:,s), [size(inputStim,1) size(inputStim,2)]);
-end
-close all
-figure
-for s = 1:size(stimdrive,2)
-    subplot(1,3,1)
-    imagesc(stimdriveIm(:,:,s))
-    title('Stimulus drive')
-    subplot(1,3,2)
-    imagesc(numeratorIm(:,:,s))
-    title('Numerator (stimulus drive.*attfield)')
-    subplot(1,3,3)
-    imagesc(suppressivedrivepop(:,:,s))
-    title('Suppressive drive')
-    pause(0.5)
-end
+stimdriveIm = unflatten(stimdrive);
+numeratorIm = unflatten(numeratorVec);
+suppIm      = unflatten(respSurround);
+suppIm      = suppIm/sum(suppIm(:));
 
 %% population response
-sptPopResp = numeratorIm ./ (suppressivedrivepop + sigmaNorm);
-if visualize
-    close all, for ii = 1:size(sptPopResp,3), imagesc(sptPopResp(:,:,ii)), pause(0.5), end
-end
-%close all, for ii = 1:size(sptPopResp,3), imagesc(sptPopResp(:,:,ii)), pause(0.5), end
+sptPopResp = numeratorIm ./ (suppIm + sigmaNorm);
 
-% pooledPopResp = convn(sptPopResp, RFsumm, 'same');
-% Go across time for a specific location in the pop response,let's say x =
-% 1, y = 2.
-predneuralweights = reshape(sptPopResp,[size(sptPopResp,1)*size(sptPopResp,2) size(sptPopResp,3)]);
+predneuralweights = flatten(sptPopResp);
 % predsummedweights = reshape(pooledPopResp,[size(pooledPopResp,1)*size(pooledPopResp,2) size(pooledPopResp,3)]);
-% end
+end
