@@ -9,10 +9,9 @@ sigmaNorm   = params(6);
 visualize   = params(7);
 
 %% Space (1D)
-step_size = mxecc/25;
-ecc = linspace(-5,5,64);
+ecc = linspace(-10,10,64);
 [X,Y] = meshgrid(ecc);
-
+Y = -1*Y;
 %% Stimuli
 stimtemp = load([fullfile(maindir, 'stimfiles/') 'stim.mat']);
 stim    = stimtemp.stim(:,:,1:end-1);
@@ -31,14 +30,13 @@ flatten     = @(x) reshape(x, fullSize*fullSize, []);
 unflatten   = @(x) reshape(x, fullSize, fullSize, []);
 
 nCenters    = size(inputStim,1);
-x           = linspace(-8.8,8.8,nCenters);
+x           = -1*linspace(-8.8,8.8,nCenters);
 y           = linspace(-8.8,8.8,nCenters);
-
 try
-    nPRFs       = size(combvec(x,y),2);
+    nPRFs       = size(combvec(y,x),2);
     stimdrivenRFs(1:2,:) = combvec(x,y);
 catch
-    nPRFs       = size(CombVec(x,y),2);
+    nPRFs       = size(CombVec(y,x),2);
     stimdrivenRFs = CombVec(x,y);
 end
 
@@ -64,21 +62,21 @@ respSurround = zeros(size(stimdrivenRFs,2),size(inputStim,3));
 for ii = 1:size(inputStim,3)
     for rfind = 1:size(stimdrivenRFs,2)
         % get the stim driven RF
-        RF = exp(-((X-(stimdrivenRFs(1,rfind))).^2 + ...
-            (Y-(stimdrivenRFs(2,rfind))).^2)./(2*(stimdrivenRFs(3,rfind))).^2);
+        RF = exp(-((X-(stimdrivenRFs(2,rfind))).^2 + ...
+            (Y-(stimdrivenRFs(1,rfind))).^2)./(2*(stimdrivenRFs(3,rfind))).^2);
         RF = RF./sum(RF(:));
-        
+        RF = flatten(RF);
         % get the stimulus vectorized
         stim = inputStim(:,:,ii);
-        stim = stim(:);
-        stimdrive(rfind, ii) = RF(:)'*stim;
+        stim = flatten(stim);
+        stimdrive(rfind, ii) = RF'*stim;    
     end
     numeratorVec(:,ii) = stimdrive(:,ii).*attfield;
     
     for rfind = 1:size(stimdrivenRFs,2)
-        distance = sqrt((X-stimdrivenRFs(1,rfind)).^2+(Y-stimdrivenRFs(2,rfind)).^2);
+        distance = sqrt((X-stimdrivenRFs(2,rfind)).^2+(Y-stimdrivenRFs(1,rfind)).^2);
         % find the weights for the surround
-        supp = exp(-.5*(distance/(stimdrivenRFs(3,rfind)*2)).^2);
+        supp = exp(-.5*(distance/(stimdrivenRFs(3,rfind)*3)).^2);
         supp = supp / sum(supp(:));
         flatsurr = flatten(supp);
         respSurround(rfind,ii) = flatsurr' * numeratorVec(:,ii);
@@ -88,7 +86,6 @@ end
 stimdriveIm = unflatten(stimdrive);
 numeratorIm = unflatten(numeratorVec);
 suppIm      = unflatten(respSurround);
-suppIm      = suppIm/sum(suppIm(:));
 
 %% population response
 sptPopResp = numeratorIm ./ (suppIm + sigmaNorm);
