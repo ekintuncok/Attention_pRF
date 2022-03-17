@@ -5,13 +5,13 @@ stim = stim(:,:,1:end-1);
 
 % maximum ecc
 stim_ecc = 12.4;
-step_size = stim_ecc/25;
+step_size = stim_ecc/35;
 
 rF_size_major = step_size:step_size:stim_ecc;
 x0 = -stim_ecc:step_size:stim_ecc;
 y0 = -stim_ecc:step_size:stim_ecc;
 
-RFIndices = combvec(rF_size_major,x0,y0);
+RFIndices = CombVec(rF_size_major,x0,y0);
 Ecc_lim = sqrt(RFIndices(2,:).^2+RFIndices(2,:).^2);
 mask = Ecc_lim < 12.4;
 RFIndices = RFIndices(:,mask);
@@ -42,7 +42,7 @@ R     = zeros(size(data,1),size(data,3));
 xCoord = zeros(size(data,1),size(data,3));
 yCoord = zeros(size(data,1),size(data,3));
 for attCond = 1:size(data,3)
-    for v = 1:size(data)
+    for v = 1:10
         
         mybeta = data(v,:,attCond);
         
@@ -69,7 +69,8 @@ for attCond = 1:size(data,3)
         end
     end
 end
-figure(1)
-plot(1:48,mybeta)
+normpred = pred(4,:)/sum(pred(3,:));
+figure
+plot(1:48,data(4,:,5))
 hold on
-plot(1:48,pred(ind,:))
+plot(1:48,normpred*10)
