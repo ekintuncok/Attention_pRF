@@ -5,7 +5,7 @@ stim = stim(:,:,1:end-1);
 
 % maximum ecc
 stim_ecc = 12.4;
-step_size = stim_ecc/35;
+step_size = stim_ecc/25;
 
 rF_size_major = step_size:step_size:stim_ecc;
 x0 = -stim_ecc:step_size:stim_ecc;
