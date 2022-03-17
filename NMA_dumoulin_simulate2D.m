@@ -35,7 +35,7 @@ RFsupp = exp(- ((X-0).^2 + (Y-0).^2)./(2*1.5*RFsd).^2); RFsupp = RFsupp./sum(RFs
 nCenters    = size(inputStim,1);
 x           = linspace(-8.8,8.8,nCenters); 
 y           = linspace(-8.8,8.8,nCenters);
-nPRFs       = size(combvec(x,y),2);
+nPRFs       = size(CombVec(x,y),2);
 numSigmas   = 10;
 sigma       = linspace(0.1,5,numSigmas); % in degrees of visual field
 maxEccen    = sqrt(x(1).^2 + y(1).^2);
@@ -44,8 +44,8 @@ sampleEccen = linspace(0,maxEccen,numSigmas);
 % If we keep the x- and y- axes range (look a line up) at [-10 to 10] our
 % max eccentricity goes up to 14 degrees. Now we need to assign our sigma
 % value accordingly. 
-stimdrivenRFs   = zeros(3,size(combvec(x,y),2));
-stimdrivenRFs(1:2,:) = combvec(x,y);
+stimdrivenRFs   = zeros(3,size(CombVec(x,y),2));
+stimdrivenRFs(1:2,:) = CombVec(x,y);
 
 for pRFInd = 1:nPRFs
     currCenter = stimdrivenRFs(1:2,pRFInd);
