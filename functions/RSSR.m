@@ -13,8 +13,7 @@ function resSumSq = RSSR(params,stim,data)
     h = h / sum(h); % normalize to sum of 1
     
     [~,RFvec] = createGauissanFields(X,Y,params(1),params(2),params(3));
-    
-    
+
     pred = conv(stimVec' * RFvec',h);
     pred = pred(1:timepoints,:);
     

@@ -42,7 +42,6 @@ for ii = 1:nPRFs
     noiselessBOLD(:,ii) = tmp(1:timepoints);
 end
 
-
 data=noiselessBOLD + pinknoise;
 
 %% FITS

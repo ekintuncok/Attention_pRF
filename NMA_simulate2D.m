@@ -72,7 +72,6 @@ for ii = 1:size(inputStim,3)
         stimdrive(rfind, ii) = RF'*stim;    
     end
     numeratorVec(:,ii) = stimdrive(:,ii).*attfield;
-    
     for rfind = 1:size(stimdrivenRFs,2)
         distance = sqrt((X-stimdrivenRFs(2,rfind)).^2+(Y-stimdrivenRFs(1,rfind)).^2);
         % find the weights for the surround
