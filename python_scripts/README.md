@@ -1,3 +1,2 @@
-# try_cookiecutter
+# Normalization model of attention in space
 
-just trying to learn some data organization
