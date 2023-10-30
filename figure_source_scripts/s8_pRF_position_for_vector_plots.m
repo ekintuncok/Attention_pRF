@@ -4,6 +4,7 @@ data = [];
 % column information (for future purposes):
 type = 'prf_shift_directional_graphs';
 [columns, ~] = attpRF_ampdata_column_indices(type);
+type = 'cart';
 
 for sub = 1:length(subject_list)
     subject = subject_list(sub).name;
@@ -22,7 +23,7 @@ for sub = 1:length(subject_list)
             prfFolder = fullfile(path2project, 'derivatives', 'prfs', sprintf('%s',subject),...
                 sprintf('ses-%s',session), 'prfFolder_2', sprintf('%s/',retinotopy_conditions{ret_data_idx}));
 
-            [eccen, angle] = attpRF_load_pRFs(prfFolder);
+            [eccen, angle] = attpRF_load_pRFs(prfFolder, type);
 
             vexpl_lh = MRIread(fullfile(prfFolder, 'lh.vexpl.mgz'));
             vexpl_rh = MRIread(fullfile(prfFolder, 'rh.vexpl.mgz'));
