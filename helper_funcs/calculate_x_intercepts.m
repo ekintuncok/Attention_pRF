@@ -1,13 +1,13 @@
 function [x_intercept1, x_intercept2] = calculate_x_intercepts(fit_func, parameters)
 
 
-X = -180:20:180;
+X = (-180:1:180);
 x_intercept1 = zeros(1, size(parameters,1));x_intercept2 = zeros(1, size(parameters,1));
 
 
 switch fit_func
     case 'diff_von_mises'
-        d_o_vonMises =  @(a1, a2, kappa1, kappa2, baseline, mu, x) a1*(exp(kappa1*cos(deg2rad(x)-mu)-log(2*pi*besseli(0,kappa1)))) - a2 * (exp(kappa2*cos(deg2rad(x)-mu)-log(2*pi*besseli(0,kappa2)))) + baseline;
+        d_o_vonMises =  @(a1, a2, kappa1, kappa2, baseline, mu, x) a1*(exp((kappa1*cos(deg2rad(x) - mu)))/(2*pi*besseli(0,kappa1))) - a2*(exp((kappa2*cos(deg2rad(x) - mu)))/(2*pi*besseli(0,kappa2))) + baseline;
 
         for roi = 1:size(parameters,1)
             if isnan(parameters(roi,1))
@@ -34,7 +34,7 @@ switch fit_func
         end
 
     case 'von_mises'
-        vonMises = @(a, kappa, baseline, mu,  x) a*exp(kappa*cos(deg2rad(x)- mu)-log(2*pi*besseli(0,kappa))) + baseline;
+        vonMises = @(a, kappa, baseline, mu,  x) a*(exp((kappa*cos(deg2rad(x) - mu)))/(2*pi*besseli(0,kappa))) + baseline;
 
         for roi = 1:size(parameters,1)
             if isnan(parameters(roi,1))
