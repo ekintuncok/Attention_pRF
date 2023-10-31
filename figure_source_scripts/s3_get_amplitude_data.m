@@ -5,7 +5,7 @@ designFolder = 'main';
 prf_folder_name = 'prfFolder_2';
 cond_compare = {'Attend In', 'Distributed', 'Attend Out'};
 target_output_dir = fullfile(path2project, 'derivatives','amplitude_data/');
-analysis_type = 'averagedMS';
+analysis_type = 'MStimeseries';
 
 [columns, props] = attpRF_ampdata_column_indices(analysis_type);
 % "analysis_type" could be

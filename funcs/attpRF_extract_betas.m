@@ -27,7 +27,7 @@ for sub = 1:length(subject_list)
     prfFolder = fullfile(path2project, 'derivatives', 'prfs', sprintf('%s',subject),...
         sprintf('ses-%s',props.session), sprintf('%s', prf_folder_name), 'avg/');
 
-    [eccen, angle] = attpRF_load_pRFs(prfFolder);
+    [eccen, angle] = attpRF_load_pRFs(prfFolder, 'polar');
 
     % load ROI information:
     labels = attpRF_load_ROIs(path2project, subject);

@@ -31,7 +31,7 @@ thresholded_betas(:,2,:) = squeeze(betas{6}); % null trial estimates
 R2 = R2';
 indices = currROI ~= 0 & R2 > 3;
 
-[eccen, pangle_to_shift] = attpRF_load_pRFs(prfFolder);
+[eccen, pangle_to_shift] = attpRF_load_pRFs(prfFolder, 'polar');
 
 visual_field_map = zeros(length(x_grid), length(y_grid), length(conditions));
 for conds = 1:length(conditions)
