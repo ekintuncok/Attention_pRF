@@ -20,26 +20,18 @@ clear TTA
 load(fullfile(path2project, sprintf('derivatives/trial_triggered_averages/all_trial_triggered_averages%s_%s.mat', onset_type{2}, data_type)));
 resp_targetlocked = TTA;
 clear TTA
+sbj_n = 8;
 
-for roi = 1:length(ROIs)
-
-    if roi == 4
-        % Subject 1 does not have hV4, V3AB or LO1, so omit them:
-        resp_triallocked(:,1,:,:,:,:) = [];
-        resp_targetlocked(:,1,:,:,:,:) = [];
-        sbj_n = 7;
-    elseif roi == 5 || roi == 6
-        sbj_n = 7;
-    else
-        sbj_n = 8;
-    end
+for iter = 1:num_fits
+    
+    fprintf('iter = %i\n', iter)
     event_trig_resp = zeros(num_comps, sbj_n, 3, 11);
 
-    for iter = 1:num_fits
-        fprintf('%s, iter = %i\n', ROIs{roi}, iter)
-        % sample subject IDs with replacement to create a sample for
-        % this given iteration of fitting:
-        rand_subj_ids = datasample(1:sbj_n,sbj_n);
+    % sample subject IDs with replacement to create a sample for
+    % this given iteration of fitting:
+    rand_subj_ids = datasample(1:sbj_n,sbj_n);
+    for roi = 1:length(ROIs)
+        fprintf('%s\n', ROIs{roi})
 
         % average the data across cortical target masks (4 polar angle
         % locations)
@@ -126,4 +118,10 @@ for roi = 1:length(ROIs)
     end
 end
 
+
+output.params = params;
+output.recon_data_all = recon_data_all;
+output.rsquare = rsquare;
+
+save(fullfile(path2project,'derivatives/trial_triggered_averages/latency_logistics_output.mat'), 'diff_latency', '-v7.3')
 save(fullfile(path2project,'derivatives/trial_triggered_averages/latency_of_attenional_modulation.mat'), 'diff_latency', '-v7.3')
