@@ -41,7 +41,7 @@ for subjInd = 1:length(subject_list)
         for condition_idx = 1:length(conditions)
             prfFolder = fullfile(path2project, 'derivatives', 'prfs', sprintf('/%s/ses-%s/%s/%i/', subject, session, folderTag, conditions(condition_idx)));
 
-            [eccentricity, angle] = attpRF_load_pRFs(prfFolder);
+            [eccentricity, angle] = attpRF_load_pRFs(prfFolder, 'polar');
 
             sigma_lh = MRIread([prfFolder, 'lh.sigma.mgz']);
             sigma_rh = MRIread([prfFolder, 'rh.sigma.mgz']);
