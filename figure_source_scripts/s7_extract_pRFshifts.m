@@ -89,7 +89,7 @@ cond_check = 1;
 if cond_check == 0
     loc = [3, 6, 9, 12]; % condition column indices aligned with the extracted data columns and target coord order
 else
-    loc = [6, 3, 12, 9]; % randomize where the data comes from such that a given target location is matched to another focal attention condition
+    loc = [12, 9, 6, 3]; % randomize where the data comes from such that a given target location is matched to another focal attention condition
 end
 
 for location = 1:num_targets

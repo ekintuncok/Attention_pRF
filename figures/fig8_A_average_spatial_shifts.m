@@ -39,7 +39,7 @@ for roi = 1:length(ROIs)
         end
     end
     [low_ci(roi), up_ci(roi)] = calculate_bootstrapped_confidence_interval(subj_mean(:,roi), 'mn');
-    [low_ci_shuffled(roi), up_ci_shuffled(roi)] = calculate_bootstrapped_confidence_interval(subj_mean(:,roi), 'mn');
+    [low_ci_shuffled(roi), up_ci_shuffled(roi)] = calculate_bootstrapped_confidence_interval(subj_mean_shuffled(:,roi), 'mn');
 end
 
 
@@ -57,8 +57,10 @@ data_tp_shf = mean(subj_mean_shuffled,1, 'omitnan');
 
 figure;
 for roi = 1:length(ROIs)
-    ll=line([2*roi-1, 2*roi],[data_tp(1,roi),data_tp(1,roi)], 'color','k','linewidth',5);
-    hold on
+    line([2*roi-1, 2*roi],[data_tp(1,roi),data_tp(1,roi)], 'color','k','linewidth',5);
+    %hold on
+    %line([2*roi-1, 2*roi],[data_tp_shf(1,roi),data_tp_shf(1,roi)], 'color','k','linewidth',5);
+
 end
 xticklabels(ROIs)
 hold on
@@ -66,7 +68,7 @@ s= plot((1.5:2:11.5), subj_mean, 'o','MarkerSize',4, 'MarkerEdgeColor',[0,0,0], 
     'linewidth',2);
 box off
 hold on
-errBar2 = errorbar((1.5:2:11.5), data_tp_shf', data_tp_shf'-low_ci_shuffled', data_tp_shf'-up_ci_shuffled',...
+errBar2 = errorbar((1.5:2:11.5)+0.65, data_tp_shf', data_tp_shf'-low_ci_shuffled', data_tp_shf'-up_ci_shuffled',...
     'color','r','linestyle','none','linewidth',2);
 hold on 
 errBar1 = errorbar((1.5:2:11.5), data_tp', data_tp'-low_ci', data_tp'-up_ci',...
