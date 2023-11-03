@@ -30,10 +30,11 @@ ylims = [-4, 4; -2, 2];
 expected_diff = [-1, 1];
 cmaps = [183,61,61;
     22,112,12]/255;
+iter=1;
 figure;
 for comp = 1:2
-    subplot(1,2,comp)
     for event_type = 1:2
+        subplot(2,2,iter)
         pp = plot(x_vals(event_type, :),squeeze(mean(diff_latency(event_type,:,:,comp), 3, 'omitnan')),'o');
         pp.MarkerFaceColor = cmaps(event_type,:);
         pp.MarkerEdgeColor = cmaps(event_type,:);
@@ -44,7 +45,6 @@ for comp = 1:2
         hold on
         yline(0)
         hold on
-        yline(expected_diff(comp),'--')
         ylim([ylims(comp, 1), ylims(comp, 2)])
         axis square
         box off
@@ -56,16 +56,12 @@ for comp = 1:2
         axis(ax, 'tight')
         ylim(ax, yl)
         xlim(ax, xlim(ax) + [-1,1]*range(xlim(ax)).* 0.1)
-        if comp == 1 && event_type == 2
-            %ylabel('Difference of rising latency [2sec-1sec] (s)')
-            legend('Cue-locked','','','','Target-locked')
-            legend boxoff
-        end
         set(gca,'FontName','roboto', 'fontsize',18)
+        iter = iter +1;
     end
 end
 
-set(gcf, 'position', [0,0,600,300])
+set(gcf, 'position', [0,0,600,600])
 
 fig_tag = fullfile(path2project,'figfiles/','fig_TTA_latency_comparison.png');
 print(gcf,fig_tag,'-dpng','-r300');
