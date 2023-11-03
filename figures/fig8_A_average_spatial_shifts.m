@@ -5,31 +5,41 @@ s0_attentionpRF;
 try
     load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal.mat'));
     load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_distributed.mat'));
+    shf_f = load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal_shuffled.mat'));
 catch ME
     s7_extract_pRFshifts;
 end
+distance_in_attend_target_shuffled = shf_f.distance_in_attend_target;
 
-cond_check = 0;
 subj_mean = zeros(length(subject_list), length(ROIs));
+subj_mean_shuffled = zeros(length(subject_list), length(ROIs));
 low_ci = zeros(1,length(ROIs));up_ci = zeros(1,length(ROIs));
+low_ci_shuffled = zeros(1,length(ROIs));up_ci_shuffled = zeros(1,length(ROIs));
 
 % get the confidence intervals:
 for roi = 1:length(ROIs)
     for subj = 1:length(subject_list)
         indices = distance_in_attend_target(:,1) == subj & distance_in_attend_target(:,2) == roi;
         difference_in_distance = [];
+        difference_in_distance_shuffled = [];
+
         if sum(indices) > 0
             for trg = 1:size(distance_in_attend_target,2)-2
                 curr_focal_data = distance_in_attend_target(indices,trg+2);
+                curr_focal_data_shuffled = distance_in_attend_target_shuffled(indices,trg+2);
                 curr_distributed_data = distance_in_att_distributed(indices,trg+2);
                 difference_in_distance(:, trg) = curr_focal_data - curr_distributed_data;
+                difference_in_distance_shuffled(:, trg) = curr_focal_data_shuffled - curr_distributed_data;
             end
             subj_mean(subj,roi) = mean(difference_in_distance, 'all');
+            subj_mean_shuffled(subj,roi) = mean(difference_in_distance_shuffled, 'all');
         else
             subj_mean(subj, roi) = NaN;
+            subj_mean_shuffled(subj, roi) = NaN;
         end
     end
     [low_ci(roi), up_ci(roi)] = calculate_bootstrapped_confidence_interval(subj_mean(:,roi), 'mn');
+    [low_ci_shuffled(roi), up_ci_shuffled(roi)] = calculate_bootstrapped_confidence_interval(subj_mean(:,roi), 'mn');
 end
 
 
@@ -43,6 +53,8 @@ for roi = 1:length(ROIs)
 end
 
 data_tp = mean(subj_mean,1, 'omitnan');
+data_tp_shf = mean(subj_mean_shuffled,1, 'omitnan');
+
 figure;
 for roi = 1:length(ROIs)
     ll=line([2*roi-1, 2*roi],[data_tp(1,roi),data_tp(1,roi)], 'color','k','linewidth',5);
@@ -54,9 +66,12 @@ s= plot((1.5:2:11.5), subj_mean, 'o','MarkerSize',4, 'MarkerEdgeColor',[0,0,0], 
     'linewidth',2);
 box off
 hold on
-errBar = errorbar((1.5:2:11.5), data_tp', data_tp'-low_ci', data_tp'-up_ci',...
+errBar2 = errorbar((1.5:2:11.5), data_tp_shf', data_tp_shf'-low_ci_shuffled', data_tp_shf'-up_ci_shuffled',...
     'color','r','linestyle','none','linewidth',2);
-errBar.CapSize = 0;
+hold on 
+errBar1 = errorbar((1.5:2:11.5), data_tp', data_tp'-low_ci', data_tp'-up_ci',...
+    'color',[65,171,93]/255,'linestyle','none','linewidth',3);
+errBar2.CapSize = 0;
 ax = gca;
 yl = ylim(ax);
 axis(ax, 'tight')
@@ -66,14 +81,15 @@ axis square
 set(gca,'FontName','Roboto', 'fontsize',20)
 set(gca,'TickLength', [0.015 0.015], 'LineWidth', 2)
 set(gcf,'color','w')
+cond_check = 0;
 if cond_check == 1
     ylabel({'Distance to a distractor (deg)'})
     ylim([-0.2, 1])
     yticks(fliplr([-0.8 -0.6 -0.4 -0.2 0 0.2]*-1))
 else
     ylabel({'Distance to attentional target (deg)'})
-    ylim([-1, 0.2])
-    yticks([-0.8 -0.6 -0.4 -0.2 0 0.2])
+    ylim([-1, 1])
+    yticks([-0.8:0.2:0.8])
 end
 set(gca,'Xtick',  (1.5:2:11.5), 'xticklabel',[])
 set(gcf, 'Position', [0 0 500 500])

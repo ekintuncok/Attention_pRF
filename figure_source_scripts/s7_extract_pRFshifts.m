@@ -1,6 +1,6 @@
 s0_attentionpRF;
 shift_data = [];
-designFolder = '05';
+designFolder = 'main';
 folderTag = 'prfFolder_2';
 disp(folderTag)
 
@@ -85,7 +85,7 @@ distance_in_attend_target = zeros(length(shift_data_thresholded), num_targets);
 distance_in_distributed = zeros(length(shift_data_thresholded), num_targets);
 
 %cond_check = input('randomize the location column idx?');
-cond_check = 0;
+cond_check = 1;
 if cond_check == 0
     loc = [3, 6, 9, 12]; % condition column indices aligned with the extracted data columns and target coord order
 else
@@ -107,7 +107,13 @@ end
 distance_in_attend_target = [shift_data_thresholded(:,1:2), (distance_in_attend_target)];
 distance_in_att_distributed = [shift_data_thresholded(:,1:2), (distance_in_distributed)];
 
-save(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal.mat'), 'distance_in_attend_target', '-v7.3');
-save(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_distributed.mat'), 'distance_in_att_distributed', '-v7.3');
+if cond_check == 1
+    cond_tag = '_shuffled';
+else
+    cond_tag = '';
+end
+
+save(fullfile(path2project, sprintf('derivatives/prf_shift_data/distance_in_focal%s.mat', cond_tag)), 'distance_in_attend_target', '-v7.3');
+save(fullfile(path2project, sprintf('derivatives/prf_shift_data/distance_in_distributed%s.mat', cond_tag)), 'distance_in_att_distributed', '-v7.3');
 
 
