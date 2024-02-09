@@ -1,4 +1,13 @@
-close all
+s0_attentionpRF;
+
+try
+    load(fullfile(path2project, 'derivatives/amplitude_data/att_resp_reorg_pseudotimeseries.mat'));
+    fprintf('>> Data successfully loaded!\n');
+catch ME
+    analysis_type = 'MStimeseries';
+    s3_get_amplitude_data;
+end
+
 crr_roi_avg = zeros(length(subject_list), length(ROIs));
 crr_roi = zeros(length(subject_list),num_targets, length(ROIs));
 
@@ -33,6 +42,8 @@ for roi = 1:length(ROIs)
     h = lsline;
     h.LineWidth = 2;
     h.Color = [112, 41, 99]/255;
+    hold on
+    scatter(attend_all(49), diff(49),5,'MarkerEdgeColor','k','MarkerFaceColor','k','Marker','o','LineWidth',1)
 
     crr = corrcoef(attend_all, diff);
     crr_roi_avg(roi) = crr(2);
@@ -144,7 +155,7 @@ for n = 1:1000
     end
 end
 
-ci = prctile(correlation_vals', [low_prct_range, high_prct_range]);
+%ci = prctile(correlation_vals', [low_prct_range, high_prct_range]);
 
 %
 % for roi = 1:length(ROIs)
