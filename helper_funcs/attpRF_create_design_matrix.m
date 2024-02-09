@@ -216,7 +216,7 @@ switch designFolder
             elseif event_type(ind) == 5
                 stim_index(ind)   = 0;
             elseif event_type(ind) == 6
-                stim_index(ind) = 50;
+                stim_index(ind) = 0;
             elseif event_type(ind) == 7
                 stim_index(ind)       = 0;
                 if currentIter ~= 52

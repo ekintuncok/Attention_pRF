@@ -141,7 +141,7 @@ for ii = 1:n
     m(linearInd) = 1;
     design{ii} = m;
     for ind = 1:length(col_num{ii})
-        if T{ii}.bar_duration(ind) == 2
+        if T{ii}.bar_duration(ind) == 2 && ~strcmp(designFolder, '10')
             design{ii}(row_nums{ii}(ind)+1, col_num{ii}(ind)) = 1;
         end
         if mod(T{ii}.mappingLocs(ind), 2) == 0 && T{ii}.bar_duration(ind) == 1
