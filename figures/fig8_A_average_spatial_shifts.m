@@ -60,7 +60,6 @@ for roi = 1:length(ROIs)
     line([2*roi-1, 2*roi],[data_tp(1,roi),data_tp(1,roi)], 'color','k','linewidth',5);
     %hold on
     %line([2*roi-1, 2*roi],[data_tp_shf(1,roi),data_tp_shf(1,roi)], 'color','k','linewidth',5);
-
 end
 xticklabels(ROIs)
 hold on
@@ -90,8 +89,8 @@ if cond_check == 1
     yticks(fliplr([-0.8 -0.6 -0.4 -0.2 0 0.2]*-1))
 else
     ylabel({'Distance to attentional target (deg)'})
-    ylim([-1, 1])
-    yticks([-0.8:0.2:0.8])
+    ylim([-1, 0.2])
+    yticks([-1:0.2:0.2])
 end
 set(gca,'Xtick',  (1.5:2:11.5), 'xticklabel',[])
 set(gcf, 'Position', [0 0 500 500])
