@@ -68,9 +68,24 @@ for eccen_idx = 1:length(props.eccen_windows)-1
     data_to_bin(eccen_indices_h, columns.base_bin_h_eccen) = eccen_idx;
 end
 
+% for angle_idx = 1:length(props.pangle_bins)-1
+%     angle_indices_v = find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < props.pangle_bins(angle_idx+1));
+%     angle_indices_h = find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < props.pangle_bins(angle_idx+1));
+%     data_to_bin(angle_indices_v, columns.base_bin_v_angle) = angle_idx;
+%     data_to_bin(angle_indices_h, columns.base_bin_h_angle) = angle_idx;
+% end
+
 for angle_idx = 1:length(props.pangle_bins)-1
-    angle_indices_v = find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < props.pangle_bins(angle_idx+1));
+    if angle_idx == 8
+        angle_indices_v = [find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < 360) ; ...
+            find(polar_coords(:, 1) < props.pangle_bins(angle_idx+1) & polar_coords(:, 1) > 0)];
+        angle_indices_h = [find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < 360) ; ...
+            find(polar_coords(:, 3) < props.pangle_bins(angle_idx+1) & polar_coords(:, 3) > 0)];
+
+    else
+        angle_indices_v = find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < props.pangle_bins(angle_idx+1));
     angle_indices_h = find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < props.pangle_bins(angle_idx+1));
+    end
     data_to_bin(angle_indices_v, columns.base_bin_v_angle) = angle_idx;
     data_to_bin(angle_indices_h, columns.base_bin_h_angle) = angle_idx;
 end
