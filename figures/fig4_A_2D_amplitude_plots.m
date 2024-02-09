@@ -1,32 +1,18 @@
 s0_attentionpRF;
-% create the grid for interpolation:
-stim_ecc = 10;
-conditions = 1:4;
-[xq,yq] = meshgrid(-12:.1:12, -12:.1:12);
-yq = -1*yq;
-flat_x = reshape(xq, [length(xq)*length(xq), 1]);
-flat_y = reshape(yq, [length(xq)*length(xq), 1]);
-
-% mask the coordinates with an ecc of larger tha the given stimulus
-% eccentricity
-eccen_vals = sqrt(flat_x.^2 + flat_y.^2);
-eccen_mask = eccen_vals < stim_ecc;
-eccen_mask_2d = reshape(eccen_mask, [length(xq),length(xq)]);
-vf_map_to_plot = zeros(length(subject_list), length(ROIs), length(xq),length(yq), length(conditions));
-rotation = 1;
-for sub = 1:length(subject_list)
-    subject = subject_list(sub).name;
-    disp(subject)
-    labels = attpRF_load_ROIs(path2project, subject);
-    for roi = 1:size(labels,2)
-        disp(ROIs{roi})
-        currROI = labels(:,roi);
-        designFolder = 'main';
-        vf_map_to_plot(sub, roi, :, :, :) = attpRF_grid_amplitude_data(currROI, path2project, subject, session, designFolder, xq, yq, eccen_mask_2d, rotation);
-    end
+try
+    load(fullfile(path2project, 'derivatives/amplitude_data/amplitude_change_full_map.mat'));
+    fprintf('>> Data successfully loaded!\n');
+catch ME
+    s2_get_amp_whole_map;
 end
 
-%% visualize
+% the default setting for this data is that the map responses are rotated
+% to align at the upper vertical meridian. Go back to the above called
+% script (s2) to change this setting to 0 and plot unrotated responses
+rotation = 1;
+
+% Define the circle that is centered at the Gabor target locations for
+% reference:
 th = 0:pi/50:2*pi;
 xunit = length(xq)/4 * cos(th) + length(xq)/2;
 yunit = length(yq)/4 * sin(th) + length(yq)/2;
@@ -37,6 +23,7 @@ figure;
 for roi = 1:length(ROIs)
     subplot(2, 3,roi)
     imagesc(mean(squeeze(mean(vf_map_to_plot(:,roi,:,:,:),1)),3),clims);
+    title(ROIs{roi})
     axis square
     box off
     axis off
@@ -46,15 +33,7 @@ for roi = 1:length(ROIs)
     set(gca,'fontsize',13)
     set(gcf,'color','w')
 end
-ha=get(gcf,'children');
-set(ha(1),'position',[.5 .25 .4 .4])
-set(ha(2),'position',[.40 .25 .4 .4])
-set(ha(3),'position',[.3 .25 .4 .4])
-set(ha(4),'position',[.2 .25 .4 .4])
-set(ha(5),'position',[.1 .25 .4 .4])
-set(ha(6),'position',[.0 .25 .4 .4])
-%colorbar('southoutside')
-set(gcf, 'Units', 'centimeters', 'Position', [0, 0, 6, 4])
+set(gcf, 'Units', 'centimeters', 'Position', [0, 0, 15, 15])
 
 % this part will show the small hV4 data plotted in Figure 4 with cued
 % activity not rotated to align at 90degrees. If rotation is ON, skip this
@@ -64,7 +43,7 @@ if rotation == 0
     clims = [-0.15,0.15];
     figure;
     iter=1;
-    for roi = 4
+    for roi = 1
         %sgtitle(ROIs{roi})
         for cond = [3,4,1,2]
             subplot(1,num_targets,iter)
