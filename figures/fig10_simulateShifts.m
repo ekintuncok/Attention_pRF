@@ -2,6 +2,7 @@ load('/Volumes/server/Projects/attentionpRF/Stim/stim.mat');
 px = size(stim, 2);
 t = 0:size(stim,3)-1;
 [x,y] = meshgrid(linspace(-12,12,px));
+
 sigma = [1.5, 4]; % prf size at 6 deg
 shiftsize = [-0.04, -0.3]; % shift of prf from attetnion in deg
 amp0 = [0.2, 0.3]; % BOLD amplitude in neutral condition
@@ -25,8 +26,6 @@ for ii = 1:length(sigma)
     plot(t, response1(ii,:), '-','color',[204, 95, 90]/255,'LineWidth',1.75)
     hold on
     plot(t, response1(ii,:)-response0(ii,:)-0.1, 'k','LineWidth',1.75)
-    hold on
-    plot(t, ampDelta(ii)*ones(size(t))-0.1, 'color',[202, 119, 75]/255, 'LineWidth',1.75)
     if ii == 1
         xlabel('Mapping stimulus position')
         ylabel('% BOLD change')
