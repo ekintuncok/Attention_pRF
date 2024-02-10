@@ -1,7 +1,7 @@
-conditions = {'avg'};
-folderTag = 'prfFolder_2';
+conditions = {'1','2','3','4','5'};
+folderTag = 'prfFolder_3';
 
-for subid = 1:length(subject_list)
+for subid = 6
     subjecttm = subject_list(subid).name;
     subject = subjecttm(5:end);
     figureDir         = fullfile(path2project, 'derivatives','figures',sprintf('sub-%s',subject));
