@@ -12,4 +12,4 @@
 module purge
 module load matlab/2022b
 
-matlab -nodisplay -nodesktop -r "run_pRF_model('wlsubj141', 1)"
+matlab -nodisplay -nodesktop -r "run_pRF_model('wlsubj141', 1, 'avg_betas')"
