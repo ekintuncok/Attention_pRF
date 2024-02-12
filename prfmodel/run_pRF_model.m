@@ -1,5 +1,20 @@
 function results = run_pRF_model(subject_info, condition, glm_folder)
 
+% This function runs pRF model on attention pRF subject data using prfVistasoft
+% wrapper, and VistaLab software. 
+% Example calls:
+
+% results = run_pRF_model('wlsubj123', 1, 'avg_betas')
+% results = run_pRF_model('wlsubj123', 1, 'main')
+% results = run_pRF_model('wlsubj123', 2, 'main')
+% results = run_pRF_model('wlsubj123', 3, 'main') ...
+% the condition refers to which attentional cueing produced the
+% corresponding beta coefficients, goes from 1 to 5 for attend up, down,
+% left, right and distributed. All this data reside in the main glmdenoise
+% folder. The avg_betas folder has the averaged beta coefficients across
+% attention conditions. There is only one condition option for this folder
+% (1). 
+
 addpath(genpath('/scratch/et2160/toolboxes/vistasoft'));
 addpath(genpath('/scratch/et2160/toolboxes/prfVista'));
 
@@ -8,6 +23,13 @@ hemispheres = {'lh','rh'};
 stim = fullfile(path2project, 'Stim', 'stim.mat');
 subject = subject_info;
 stimradius = 12;
+
+% force the condition to be equal to one if average betas are inputted to
+% the pRF model:
+if strcmp(glm_folder, 'avg_betas')
+    condition = 1;
+end
+
 glm_results_dir = fullfile(path2project, 'derivatives', 'GLMdenoise', glm_folder);
 prf_results_dir = fullfile(path2project, 'derivatives', 'prfs');
 for h = 1:length(hemispheres)
