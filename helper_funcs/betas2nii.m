@@ -78,7 +78,7 @@ for condition = 1:num_conditions
     assert(isequal(numel(lcurv) + numel(rcurv), numel(results.R2)), ...
         'The number of vertices in the GLM denoise results and the l&r curv files do not match;');
     
-    %% extract the nifti files and the orig
+    % extract the nifti files and the orig
     path2subj = fullfile(path2project, 'derivatives','fmriprep', sprintf('sub-%s', subject), 'ses-nyu3t01', 'func');
     runs = dir(sprintf('%s/*fsnative*.nii.gz',path2subj));
     myfiles_nii = cell(1,length(runs));
@@ -92,7 +92,7 @@ for condition = 1:num_conditions
     mgz     = MRIread(sprintf('%s/mri/orig.mgz',path2fs));
     
     
-    %% MGZ conversions;
+    % MGZ conversions;
     for f = 1 : length(fields)
         for h = 1 : length(hemi)
             sizetosave  = size(eval(sprintf('tmp_file{%i}.vol', h)));
