@@ -24,7 +24,11 @@ data_to_bin = data(thresholded_vertex_indices,:);
 % way:
 
 % assign bin numbers to the averaged position estimates:
-base_type = 'directional';
+base_type = input('distributed (supp figure) or directional (main manuscript figure):', 's');
+
+if strcmp(base_type, 'distributed')
+    props.eccen_windows = 0.5:1:6.25;
+end
 avg_type = 'cart';
 
 % Create a bin base to assess the directional shifts. We can either use the
@@ -68,28 +72,32 @@ for eccen_idx = 1:length(props.eccen_windows)-1
     data_to_bin(eccen_indices_h, columns.base_bin_h_eccen) = eccen_idx;
 end
 
-% for angle_idx = 1:length(props.pangle_bins)-1
-%     angle_indices_v = find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < props.pangle_bins(angle_idx+1));
-%     angle_indices_h = find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < props.pangle_bins(angle_idx+1));
-%     data_to_bin(angle_indices_v, columns.base_bin_v_angle) = angle_idx;
-%     data_to_bin(angle_indices_h, columns.base_bin_h_angle) = angle_idx;
-% end
+if props.pangle_bins(1) == 0
 
-for angle_idx = 1:length(props.pangle_bins)-1
-    if angle_idx == 8
-        angle_indices_v = [find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < 360) ; ...
-            find(polar_coords(:, 1) < props.pangle_bins(angle_idx+1) & polar_coords(:, 1) > 0)];
-        angle_indices_h = [find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < 360) ; ...
-            find(polar_coords(:, 3) < props.pangle_bins(angle_idx+1) & polar_coords(:, 3) > 0)];
-
-    else
+    for angle_idx = 1:length(props.pangle_bins)-1
         angle_indices_v = find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < props.pangle_bins(angle_idx+1));
-    angle_indices_h = find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < props.pangle_bins(angle_idx+1));
+        angle_indices_h = find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < props.pangle_bins(angle_idx+1));
+        data_to_bin(angle_indices_v, columns.base_bin_v_angle) = angle_idx;
+        data_to_bin(angle_indices_h, columns.base_bin_h_angle) = angle_idx;
     end
-    data_to_bin(angle_indices_v, columns.base_bin_v_angle) = angle_idx;
-    data_to_bin(angle_indices_h, columns.base_bin_h_angle) = angle_idx;
-end
 
+else
+
+    for angle_idx = 1:length(props.pangle_bins)-1
+        if angle_idx == 8
+            angle_indices_v = [find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < 360) ; ...
+                find(polar_coords(:, 1) < props.pangle_bins(angle_idx+1) & polar_coords(:, 1) > 0)];
+            angle_indices_h = [find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < 360) ; ...
+                find(polar_coords(:, 3) < props.pangle_bins(angle_idx+1) & polar_coords(:, 3) > 0)];
+        else
+            angle_indices_v = find(polar_coords(:, 1) > props.pangle_bins(angle_idx) & polar_coords(:, 1) < props.pangle_bins(angle_idx+1));
+            angle_indices_h = find(polar_coords(:, 3) > props.pangle_bins(angle_idx) & polar_coords(:, 3) < props.pangle_bins(angle_idx+1));
+        end
+        data_to_bin(angle_indices_v, columns.base_bin_v_angle) = angle_idx;
+        data_to_bin(angle_indices_h, columns.base_bin_h_angle) = angle_idx;
+    end
+
+end
 % get rid of the vertices that fell outside of the desired bins in either
 % horizontal or vertical condition:
 bin_indices_all = data_to_bin(:,columns.base_bin_v_eccen:columns.base_bin_h_angle) ~= 0; smmd_bin = sum(bin_indices_all, 2);
@@ -112,7 +120,7 @@ upper_roi_cmap = [222, 165, 146]/255;
 lower_roi_cmap = [141, 107, 97]/255;
 x_line_dat = -8:8;
 
-for shift_dir = 2
+for shift_dir = 1:length(shift_dirs)
     if shift_dir == 1
         att_cond_indices = [columns.att_left_col(1), columns.att_left_col(2), columns.att_right_col(1), columns.att_right_col(2)];
         plot_col = 'k';
@@ -132,7 +140,7 @@ for shift_dir = 2
         target_coords = [0, 6; 0, -6];
         cmap = [upper_roi_cmap;lower_roi_cmap];
     end
-    ff = figure;
+    ff = figure(shift_dir);
     for roi = 1:length(ROIs)
         subplot(1, 5, roi)
         roi_mask = data_to_plot(:,columns.roi_col)==roi;
@@ -192,7 +200,7 @@ for shift_dir = 2
 
                 if shift_dir == 1 % horizontal axis
                     if attend_dir1_bin_pos(1) < attend_dir2_bin_pos(1)
-                         vector_col = [0,0,0];
+                        vector_col = [0,0,0];
                     else
                         vector_col = [189,0,38]/255;
                     end
