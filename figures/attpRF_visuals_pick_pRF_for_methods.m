@@ -6,7 +6,7 @@ subject = subject_list(sub).name;
 % load GLM results:
 GLMfolder         = sprintf('%sderivatives/GLMdenoise/%s/%s/ses-%s/', path2project, designFolder, subject, session);
 load([GLMfolder sprintf('%s_ses-%s_%s_results.mat', subject, session, designFolder)]);% this loads 'betas' and 'R2'
-for idx = 1:length(betas)
+for idx = 1:length(betas)-2
     betas_resh(:,:,idx) = squeeze(betas{idx});
 end
 
@@ -59,4 +59,4 @@ measured_responses = betas_resh(best_vert,:,3);
 measured_responses = measured_responses/norm(measured_responses);
 
 
-attpRF_plot_methods_fig;
+attpRF_visuals_plot_methods_fig;

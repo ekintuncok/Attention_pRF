@@ -27,7 +27,7 @@ data_to_bin = data(thresholded_vertex_indices,:);
 base_type = input('distributed (supp figure) or directional (main manuscript figure):', 's');
 
 if strcmp(base_type, 'distributed')
-    props.eccen_windows = 0.5:1:6.25;
+    props.eccen_windows = 0.5:1.5:6.25;
 end
 avg_type = 'cart';
 
@@ -140,7 +140,7 @@ for shift_dir = 1:length(shift_dirs)
         target_coords = [0, 6; 0, -6];
         cmap = [upper_roi_cmap;lower_roi_cmap];
     end
-    ff = figure(shift_dir);
+    ff = figure;
     for roi = 1:length(ROIs)
         subplot(1, 5, roi)
         roi_mask = data_to_plot(:,columns.roi_col)==roi;

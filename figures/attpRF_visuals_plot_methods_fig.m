@@ -4,7 +4,7 @@ upper_roi_cmap = [222, 165, 146]/255;
 lower_roi_cmap = [141, 107, 97]/255;
 cmap_targ = [upper_roi_cmap;lower_roi_cmap;left_roi_cmap;right_roi_cmap];
 figure;
-b = bar(measured_responses,'FaceColor',[1,1,1], 'EdgeColor',lower_roi_cmap);
+b = bar(measured_responses,'FaceColor',[1,1,1], 'EdgeColor',left_roi_cmap);
 b.LineWidth = 3;
 b.BarWidth = 1;
 hold on
@@ -28,7 +28,7 @@ print(gcf,fig_tag,'-dpng','-r300');
 prf_params(1,1) =  x_fits(best_vert);
 prf_params(1,2) =  y_fits(best_vert);
 prf_params(1,3) = sigma_minor(best_vert);
-col = lower_roi_cmap;
+col = left_roi_cmap;
 plotgrid = 1;
 makeVFPRF(prf_params,col,plotgrid)
 fig_tag = fullfile(path2project,'figfiles/','fig_example_pRF.png');
