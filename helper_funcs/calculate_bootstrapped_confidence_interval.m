@@ -14,7 +14,7 @@ high_prct_range = 100-low_prct_range;
 ci_all = zeros(2, size(data, 2));
 
 for cond = 1:size(data, 2)
-    boot_shift_data = bootstrp(num_samples, fnc, data(:, cond));
+    boot_data = bootstrp(num_samples, fnc, data(:, cond));
     ci_all(:, cond) = prctile(boot_shift_data, [low_prct_range, high_prct_range]);
 end
 
