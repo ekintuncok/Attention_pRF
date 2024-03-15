@@ -46,17 +46,25 @@ for roi = 1:length(ROIs)
         sm_attend_all      = conv(attend_all, k2/sum(k2), 'same');
         sm_attend_out      = conv(attend_out, k3/sum(k3), 'same');
 
-        plot(1:num_data_pts-1, sm_attend_location(1:num_data_pts-1),'color',[204, 95, 90]/255,'LineWidth', 1)
+        plot(1:(num_data_pts-1)/2, sm_attend_location(1:(num_data_pts)/2),'color',[204, 95, 90]/255,'LineWidth', 1)
         hold on
-        plot(num_data_pts, sm_attend_location(num_data_pts),'o','MarkerSize', 2,'MarkerEdgeColor',[204, 95, 90]/255,'MarkerFaceColor',[204, 95, 90]/255)
+        plot((num_data_pts-1)/2+2:num_data_pts, sm_attend_location((num_data_pts-1)/2+1:num_data_pts-1),'color',[204, 95, 90]/255,'LineWidth', 1)
         hold on
-        plot(1:num_data_pts-1,sm_attend_all(1:num_data_pts-1),'color',[127,127,127]/255,'LineWidth',1)
+        plot(num_data_pts+2, sm_attend_location(num_data_pts),'o','MarkerSize', 2,'MarkerEdgeColor',[204, 95, 90]/255,'MarkerFaceColor',[204, 95, 90]/255)
+       
         hold on
-        plot(num_data_pts, sm_attend_all(num_data_pts),'o','MarkerSize', 2,'MarkerEdgeColor',[127,127,127]/255,'MarkerFaceColor',[127,127,127]/255)
+        plot(1:(num_data_pts-1)/2, sm_attend_all(1:(num_data_pts)/2),'color',[127,127,127]/255,'LineWidth',1)
         hold on
-        plot(1:num_data_pts-1,sm_attend_out(1:num_data_pts-1), 'color', [42, 76, 101]/255,'LineWidth', 1)
+        plot((num_data_pts-1)/2+2:num_data_pts, sm_attend_all((num_data_pts-1)/2+1:num_data_pts-1),'color',[127,127,127]/255,'LineWidth', 1)
         hold on
-        plot(num_data_pts, sm_attend_out(num_data_pts),'o','MarkerSize', 2,'MarkerEdgeColor',[42, 76, 101]/255,'MarkerFaceColor', [42, 76, 101]/255)
+        plot(num_data_pts+2, sm_attend_all(num_data_pts),'o','MarkerSize', 2,'MarkerEdgeColor',[127,127,127]/255,'MarkerFaceColor',[127,127,127]/255)
+
+        hold on
+        plot(1:(num_data_pts-1)/2, sm_attend_out(1:(num_data_pts)/2), 'color', [42, 76, 101]/255,'LineWidth', 1)
+        hold on
+        plot((num_data_pts-1)/2+2:num_data_pts, sm_attend_out((num_data_pts-1)/2+1:num_data_pts-1),'color',[42, 76, 101]/255,'LineWidth', 1)
+        hold on
+        plot(num_data_pts+2, sm_attend_out(num_data_pts),'o','MarkerSize', 2,'MarkerEdgeColor',[42, 76, 101]/255,'MarkerFaceColor',[42, 76, 101]/255)
         hold on
         yline(0)
         hold on
@@ -66,10 +74,30 @@ for roi = 1:length(ROIs)
         % plot the error bars of difference (att RF - att OUT):
         diff = sm_attend_location - sm_attend_out;
         errbar = abs(diff - squeeze(ci(:, roi, location,:)));
+        errbar_tp = [errbar(2,:); errbar(1,:)];
         offset_errbars = -0.5;
         hold on
-        plot(diff+offset_errbars,'linewidth', 1)
-        s = shadedErrorBar(1:length(diff), diff+offset_errbars, abs(errbar),'lineProps',{'color',[112, 41, 99]/255}, 'patchSaturation', 0.3);
+        plot(1:(num_data_pts-1)/2, diff(1:(num_data_pts-1)/2)+offset_errbars,'linewidth', 1)
+        s = shadedErrorBar(1:length(diff(1:(num_data_pts-1)/2)), diff(1:(num_data_pts-1)/2)+offset_errbars,...
+            abs(errbar_tp(:,1:(num_data_pts-1)/2))','lineProps',{'color',[112, 41, 99]/255}, 'patchSaturation', 0.3);
+        hold on
+        plot((num_data_pts-1)/2+2:num_data_pts, diff((num_data_pts-1)/2+1:num_data_pts-1)+offset_errbars,'linewidth', 1)
+        s = shadedErrorBar((num_data_pts-1)/2+2:num_data_pts, diff((num_data_pts-1)/2+1:num_data_pts-1)+offset_errbars,...
+            abs(errbar_tp(:,(num_data_pts-1)/2+1:num_data_pts-1)),'lineProps',{'color',[112, 41, 99]/255}, 'patchSaturation', 0.3);
+        hold on
+        plot(num_data_pts+2, diff(num_data_pts)+offset_errbars,'o','MarkerSize', 0.75,'MarkerEdgeColor',[112, 41, 99]/255,'MarkerFaceColor',[112, 41, 99]/255)
+        lw_ci = ci(1, roi, location,end);
+        up_ci = ci(2, roi, location,end);
+        hold on
+        err = errorbar(num_data_pts+2, diff(num_data_pts)+offset_errbars, abs((diff(num_data_pts)-lw_ci)),...
+             abs((diff(num_data_pts)-up_ci)),'linestyle','none','linewidth',2);
+        err.Color = [112, 41, 99]/255;
+        err.CapSize = 0;
+
+        %
+        % s = shadedErrorBar(num_data_pts+2, diff(num_data_pts)+offset_errbars,...
+        %     abs(errbar(num_data_pts)),'lineProps',{'color',[112, 41, 99]/255}, 'patchSaturation', 0.3);
+        % s.mainLine.Marker = 'o';
         yline(offset_errbars, 'color', 'k')
         if roi == 1 && location == 1
             legend('Attend RF', '','Distributed','', 'Attend out','')
