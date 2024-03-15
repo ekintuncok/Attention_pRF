@@ -120,7 +120,7 @@ upper_roi_cmap = [222, 165, 146]/255;
 lower_roi_cmap = [141, 107, 97]/255;
 x_line_dat = -8:8;
 
-for shift_dir = 1:length(shift_dirs)
+for shift_dir = 1
     if shift_dir == 1
         att_cond_indices = [columns.att_left_col(1), columns.att_left_col(2), columns.att_right_col(1), columns.att_right_col(2)];
         plot_col = 'k';
@@ -161,9 +161,9 @@ for shift_dir = 1:length(shift_dirs)
         plot(-1*x_line_dat, x_line_dat, 'color',[127 127 127]/255)
         hold on
         % draw the targets:
-        plot(target_coords(1,1), target_coords(1,2), 'o',  'MarkerFaceColor', cmap(1,:),'MarkerEdgeColor', cmap(1,:), 'MarkerSize', 15)
+        plot(target_coords(1,1), target_coords(1,2), 'o',  'MarkerFaceColor', [0,0,0],'MarkerEdgeColor', [0,0,0], 'MarkerSize', 15)
         hold on
-        plot(target_coords(2,1), target_coords(2,2), 'o', 'MarkerFaceColor', cmap(2,:),'MarkerEdgeColor', cmap(2,:),'MarkerSize', 15)
+        plot(target_coords(2,1), target_coords(2,2), 'o', 'MarkerFaceColor', 'none','MarkerEdgeColor', [0,0,0],'MarkerSize', 15)
         hold on
 
 
@@ -213,12 +213,13 @@ for shift_dir = 1:length(shift_dirs)
                 end
 
                 % finally plot the vector:
-                plot(attend_dir1_bin_pos(1), attend_dir1_bin_pos(2), 'o', 'MarkerFaceColor', cmap(1,:),'MarkerEdgeColor', cmap(1,:), 'MarkerSize', 3)
+                plot(attend_dir1_bin_pos(1), attend_dir1_bin_pos(2), 'o', 'MarkerFaceColor', vector_col,'MarkerEdgeColor', vector_col, 'MarkerSize', 3)
                 hold on
-                plot(attend_dir2_bin_pos(1), attend_dir2_bin_pos(2), 'o','MarkerFaceColor',  cmap(2,:),'MarkerEdgeColor', cmap(2,:), 'MarkerSize', 3)
+                plot(attend_dir2_bin_pos(1), attend_dir2_bin_pos(2), 'o','MarkerFaceColor',  'none','MarkerEdgeColor', vector_col, 'MarkerSize', 3)
                 hold on
-                quiver(attend_dir1_bin_pos(1), attend_dir1_bin_pos(2), attend_dir2_bin_pos(1)-attend_dir1_bin_pos(1), attend_dir2_bin_pos(2)-attend_dir1_bin_pos(2),...
-                    'off','linewidth',1.75,'color',vector_col)
+                q = quiver(attend_dir1_bin_pos(1), attend_dir1_bin_pos(2), attend_dir2_bin_pos(1)-attend_dir1_bin_pos(1), attend_dir2_bin_pos(2)-attend_dir1_bin_pos(2),...
+                    'off','linewidth',1.75,'color',vector_col);
+                q.ShowArrowHead = 'off';
                 axis square
                 set(gcf,'color','w')
                 set(gca,'FontName','Roboto','FontSize',18)
@@ -233,3 +234,4 @@ for shift_dir = 1:length(shift_dirs)
         end
     end
 end
+copygraphics(ff, 'ContentType','vector')
