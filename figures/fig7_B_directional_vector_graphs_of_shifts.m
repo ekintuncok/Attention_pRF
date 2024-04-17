@@ -120,7 +120,7 @@ upper_roi_cmap = [222, 165, 146]/255;
 lower_roi_cmap = [141, 107, 97]/255;
 x_line_dat = -8:8;
 
-for shift_dir = 1
+for shift_dir = 2
     if shift_dir == 1
         att_cond_indices = [columns.att_left_col(1), columns.att_left_col(2), columns.att_right_col(1), columns.att_right_col(2)];
         plot_col = 'k';
