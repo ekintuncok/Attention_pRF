@@ -44,7 +44,8 @@ switch type
 
     case 'prf_shift_directional_graphs'
         props.pangle_bins = 0:45:360;
-        props.eccen_windows =  0.5:0.75:6.25;
+        %props.pangle_bins = [22.50,   67.50,  112.50,  157.50,  202.50,  247.50,  292.50  337.50, 22.5];
+        props.eccen_windows =  0.5:1:6.25;
         %props.eccen_windows = 0.5:1:8;
         columns.subj_col = 1;
         columns.roi_col = 2;
