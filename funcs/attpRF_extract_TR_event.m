@@ -1,6 +1,6 @@
 function [TR_event_information] = attpRF_extract_TR_event(path2project, subject)
 
-design_dir = fullfile(path2project, 'derivatives','design_matrices', '01',sprintf('%s',subject), 'ses-nyu3t99/');
+design_dir = fullfile(path2project, 'derivatives','design_matrices', 'main',sprintf('%s',subject), 'ses-nyu3t99/');
 behavior_dir = fullfile(path2project, 'BehaviorData','BehavioralRaw', sprintf('%s/', subject));
 
 design_mat_names = dir(fullfile(behavior_dir, '*experimentalDesignMat*'));
@@ -30,6 +30,10 @@ for run_idx = 1:length(design)
     all_trs = cat(1, all_trs, curr_run);
 end
 
+% get rid of the gabor event markers since it's modeled on every trial
+% anyways:
+all_trs(:, 246:end) = [];
+
 TR_event_information = zeros(size(all_trs,1),4);
 stim_iter = 1;
 for tr_idx = 1:size(all_trs, 1)
@@ -46,3 +50,5 @@ for tr_idx = 1:size(all_trs, 1)
         stim_iter = stim_iter +1;
     end
 end
+
+
