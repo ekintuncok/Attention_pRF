@@ -30,7 +30,7 @@ sessionList       = {'nyu3t01','nyu3t02','nyu3t03','nyu3t04'};
 dataFolder        = 'fmriprep';
 task              = 'attprf';
 
-designFolder      = 'main';
+designFolder      = 'main'; % this could be 'shuffled' for the control analysis of pRF center shifts.
 ROIs = {'V1','V2','V3', 'hV4','V3AB', 'LO1'};
 
 num_iterations = 1000;
