@@ -1,7 +1,18 @@
 s0_attentionpRF;
 shift_data = [];
-designFolder = 'main';
-folderTag = 'prfFolder_2';
+
+%cond_check = input('randomize the location column idx?');
+cond_check = 1;
+if cond_check == 0
+    designFolder = 'main';
+    folderTag = 'prfFolder_2';
+    cond_tag = '';
+else
+    designFolder = 'shuffled';
+    folderTag = 'shuffled';
+    cond_tag = '_shuffled';
+end
+
 disp(folderTag)
 
 for sub = 1:length(subject_list)
@@ -83,14 +94,7 @@ change_in_distance = [];
 % Calculate distance changes:
 distance_in_attend_target = zeros(length(shift_data_thresholded), num_targets);
 distance_in_distributed = zeros(length(shift_data_thresholded), num_targets);
-
-%cond_check = input('randomize the location column idx?');
-cond_check = 1;
-if cond_check == 0
-    loc = [3, 6, 9, 12]; % condition column indices aligned with the extracted data columns and target coord order
-else
-    loc = [12, 9, 6, 3]; % randomize where the data comes from such that a given target location is matched to another focal attention condition
-end
+loc = [3, 6, 9, 12];
 
 for location = 1:num_targets
     attend_target_x =  shift_data_thresholded(:, loc(location));
@@ -107,13 +111,7 @@ end
 distance_in_attend_target = [shift_data_thresholded(:,1:2), (distance_in_attend_target)];
 distance_in_att_distributed = [shift_data_thresholded(:,1:2), (distance_in_distributed)];
 
-if cond_check == 1
-    cond_tag = '_shuffled';
-else
-    cond_tag = '';
-end
 
 save(fullfile(path2project, sprintf('derivatives/prf_shift_data/distance_in_focal%s.mat', cond_tag)), 'distance_in_attend_target', '-v7.3');
 save(fullfile(path2project, sprintf('derivatives/prf_shift_data/distance_in_distributed%s.mat', cond_tag)), 'distance_in_att_distributed', '-v7.3');
-
 

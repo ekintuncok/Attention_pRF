@@ -6,10 +6,12 @@ try
     load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal.mat'));
     load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_distributed.mat'));
     shf_f = load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal_shuffled.mat'));
+    shf_d = load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_distributed_shuffled.mat'));
 catch ME
     s7_extract_pRFshifts;
 end
 distance_in_attend_target_shuffled = shf_f.distance_in_attend_target;
+distance_in_attend_distributed_shuffled = shf_d.distance_in_att_distributed;
 
 subj_mean = zeros(length(subject_list), length(ROIs));
 subj_mean_shuffled = zeros(length(subject_list), length(ROIs));
@@ -20,16 +22,20 @@ low_ci_shuffled = zeros(1,length(ROIs));up_ci_shuffled = zeros(1,length(ROIs));
 for roi = 1:length(ROIs)
     for subj = 1:length(subject_list)
         indices = distance_in_attend_target(:,1) == subj & distance_in_attend_target(:,2) == roi;
+        indices_shuffled = distance_in_attend_target_shuffled(:,1) == subj & distance_in_attend_target_shuffled(:,2) == roi;
         difference_in_distance = [];
         difference_in_distance_shuffled = [];
 
         if sum(indices) > 0
             for trg = 1:size(distance_in_attend_target,2)-2
                 curr_focal_data = distance_in_attend_target(indices,trg+2);
-                curr_focal_data_shuffled = distance_in_attend_target_shuffled(indices,trg+2);
                 curr_distributed_data = distance_in_att_distributed(indices,trg+2);
                 difference_in_distance(:, trg) = curr_focal_data - curr_distributed_data;
-                difference_in_distance_shuffled(:, trg) = curr_focal_data_shuffled - curr_distributed_data;
+            end
+            for trg = 1:size(distance_in_attend_target,2)-2
+                curr_focal_data_shuffled = distance_in_attend_target_shuffled(indices_shuffled,trg+2);
+                curr_distributed_data_shuffled = distance_in_attend_distributed_shuffled(indices_shuffled,trg+2);
+                difference_in_distance_shuffled(:, trg) = curr_focal_data_shuffled - curr_distributed_data_shuffled;
             end
             subj_mean(subj,roi) = mean(difference_in_distance, 'all');
             subj_mean_shuffled(subj,roi) = mean(difference_in_distance_shuffled, 'all');
@@ -64,6 +70,9 @@ end
 xticklabels(ROIs)
 hold on
 s= plot((1.5:2:11.5), subj_mean, 'o','MarkerSize',4, 'MarkerEdgeColor',[0,0,0], 'MarkerFaceColor', [0,0,0],...
+    'linewidth',2);
+hold on
+s= plot((1.5:2:11.5)+0.65, data_tp_shf, 'o','MarkerSize',4, 'MarkerEdgeColor',[1,0,0], 'MarkerFaceColor', [1,0,0],...
     'linewidth',2);
 box off
 hold on
