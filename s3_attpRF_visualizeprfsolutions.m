@@ -1,7 +1,8 @@
+s0_attentionpRF;
 conditions = {'1','2','3','4','5'};
-folderTag = 'prfFolder_3';
+folderTag = 'shuffled';
 
-for subid = 6
+for subid = 1:length(subject_list)
     subjecttm = subject_list(subid).name;
     subject = subjecttm(5:end);
     figureDir         = fullfile(path2project, 'derivatives','figures',sprintf('sub-%s',subject));
@@ -27,10 +28,10 @@ end
 %     end
 %     getpRFparameterdist(path2project, subject, prfFolder, figuresFolder)
 % end
-for subid = 1:length(subject_list)
-    subjecttm = subject_list(subid).name;
-    subject = subjecttm(5:end);
-    disp(subject)
-    which_roi_boundaries = 'hand';
-    getFlatMaps(path2project,subject,session,conditions, which_roi_boundaries, folderTag)
-end
+% for subid = 1:length(subject_list)
+%     subjecttm = subject_list(subid).name;
+%     subject = subjecttm(5:end);
+%     disp(subject)
+%     which_roi_boundaries = 'hand';
+%     getFlatMaps(path2project,subject,session,conditions, which_roi_boundaries, folderTag)
+% end

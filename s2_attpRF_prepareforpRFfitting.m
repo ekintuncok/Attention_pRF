@@ -6,7 +6,7 @@ for sub = 1:length(subject_list)
     disp(subject)
 
     designFolder_source = 'main';
-
+    %designFolder_source = 'shuffled';
     GLMfolder         = sprintf('%sderivatives/GLMdenoise/%s/sub-%s/ses-%s/', path2project, designFolder_source, subject, session);
 
     % convert percent BOLD change estimates to nifti for faster pRF fitting:
@@ -15,7 +15,7 @@ for sub = 1:length(subject_list)
     % use the existing GLM estimates, but average them across attention
     % conditions and covert them to the proper format for the averaged pRF
     % fits:
-    designFolder_dest = 'avg_betas';
+    %designFolder_dest = 'avg_betas';
 
-    averageBetas(path2project, subject, designFolder_source, designFolder_dest);
+    %averageBetas(path2project, subject, designFolder_source, designFolder_dest);
 end
