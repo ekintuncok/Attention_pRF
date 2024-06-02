@@ -1,4 +1,14 @@
-attpRF_behavior_analyze_group;
+path2project = '/Volumes/server/Projects/attentionpRF';
+
+try
+    load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/behavioral_sensitivity.mat')));
+    load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/reaction_time.mat')));
+catch ME
+    warning('>> I cannot find the event-locked timeseries data. Run /behavior/attpRF_behavior_analyze_group.m')
+end
+
+numconds = 5;
+numcuetype = 3;
 
 % Figure 1: Plot behavioral sensitivity
 CIlower = zeros(numconds, numcuetype);
@@ -32,7 +42,7 @@ ylim([0.1,max(rt_data(:))+0.1])
 ylabel('Reaction Time (s)')
 set(gca,'xtick',[])
 ax = gca;
-yl = ylim(ax); 
+yl = ylim(ax);
 axis(ax, 'tight')
 ylim(ax, yl)
 xlim(ax, xlim(ax) + [-1,1]*range(xlim(ax)).* 0.3)
@@ -45,7 +55,7 @@ hold on
 
 for ss = 1:size(dpri_data,2)
     s = plot(squeeze(dpri_data(:,ss,:)), '.', 'markerfacecolor',cue_colors(ss,:),...
-         'markeredgecolor',cue_colors(ss,:), 'markersize',14, 'LineWidth',1.5);
+        'markeredgecolor',cue_colors(ss,:), 'markersize',14, 'LineWidth',1.5);
 end
 set(gca,'FontName','roboto',    'fontsize',25)
 set(gca,'TickLength', [0.03 0.03], 'LineWidth', 2)
@@ -88,7 +98,7 @@ ylabel('Reaction time (s)')
 set(gca,'XTick',[])
 yticks([0.2,0.5,0.8])
 ax = gca;
-yl = ylim(ax); 
+yl = ylim(ax);
 axis(ax, 'tight')
 ylim(ax, yl)
 xlim(ax, xlim(ax) + [-1,1]*range(xlim(ax)).* 0.3)
@@ -97,7 +107,7 @@ hold on
 box off
 for ss = 1:size(rt_group_avg,2)
     s = plot(squeeze(rt_data(:,ss,:)), '.', 'markerfacecolor',cue_colors(ss,:),...
-         'markeredgecolor',cue_colors(ss,:), 'markersize',14,'LineWidth',1.5);
+        'markeredgecolor',cue_colors(ss,:), 'markersize',14,'LineWidth',1.5);
 end
 hold on
 errBar = errorbar(1:5, (rt_group_avg),(CIlow),(CIhigh),'k','linestyle','none','linewidth',2);
