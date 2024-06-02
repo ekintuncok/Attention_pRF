@@ -1,3 +1,10 @@
+s0_attentionpRF;
+try
+    load(fullfile(path2project, sprintf('EDFfiles/EyeAnalyzed/EyeData.mat')));
+catch ME
+    warning('>> I cannot find processed eye tracking data. Run /eye_scripts/attpRF_eye_extract.m, then /eye_scripts/attpRF_eye_convert.m')
+end
+
 x_pixels = 1920;
 y_pixels = 1080;
 center_X = x_pixels/2;

@@ -4,7 +4,7 @@ try
     load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/behavioral_sensitivity.mat')));
     load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/reaction_time.mat')));
 catch ME
-    warning('>> I cannot find the event-locked timeseries data. Run /behavior/attpRF_behavior_analyze_group.m')
+    warning('>> I cannot find analyzed behavior data. Run /behavior/attpRF_behavior_analyze_group.m')
 end
 
 numconds = 5;
