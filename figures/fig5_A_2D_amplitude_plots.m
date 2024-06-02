@@ -14,6 +14,8 @@ rotation = 1;
 % Define the circle that is centered at the Gabor target locations for
 % reference:
 th = 0:pi/50:2*pi;
+[xq,yq] = meshgrid(-12:.1:12, -12:.1:12);
+yq = -1*yq;
 xunit = length(xq)/4 * cos(th) + length(xq)/2;
 yunit = length(yq)/4 * sin(th) + length(yq)/2;
 
