@@ -7,3 +7,9 @@ The project investigates how multiple visual cortex maps prepare for the represe
 
 ### Code structure:
 
+- s0_attentionpRF : main script that adds the needed toolboxes to path, defines the main data and figure folders, assigns subject and session lists, some basic indexing information (columns that represent attend up vs down, etc.
+- s1_attpRF_prepareforGLM : prepares the data for GLMdenoise, which is the first stage analysis in the pipeline. This script doesn't have to run on the processed data that is used to make the figures. Only to be used for repeating the entire analysis pipeline.
+    - (func) gii2nii : For each observer, it converts the GIFTI fMRI files to NIFTI ang MGZ files. MGZ files are inputted to GLMdenoise
+    - (func) BIDSformatdesign : For each observer, it creates a design matrix to be inputted to GLMdenoise. This function is based on the winawerlab MRItools repository. 
+
+# behavior
