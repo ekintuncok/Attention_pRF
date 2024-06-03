@@ -1,4 +1,4 @@
-function [output] = attpRF_behavior_analyze_subj(subject, sessionList, dataConcatenated, resultsDir)
+function [output] = analyze_subject(sessionList, dataConcatenated, resultsDir)
 % Set and make the folders for the subject:
 
 figurefold = [resultsDir 'figures'];
@@ -130,6 +130,7 @@ for sesInd = 1:length(sessionList)+1
     dprime(5,:)  = avgdprime;
     
     percentCorrect(5,:) = avgpercentCorrect;
+    figure;
     for cueIndex = 1:numLocations+1
         CIhigh = CIupper(cueIndex,:)-dprime(cueIndex,:);
         CIlow = CIlower(cueIndex,:)-dprime(cueIndex,:);
@@ -138,7 +139,7 @@ for sesInd = 1:length(sessionList)+1
         sgtitle(nametag)
         subplot(1,5,cueIndex)
         thisBar = bar(dprime(cueIndex,:),'FaceColor', 'flat');
-        thisBar.CData = colormap(brewermap(3, 'Bupu'));
+        thisBar.CData = [204, 95, 90; 189,189,189; 42, 76, 101]/255;
         ylim([min(dprime(:))-1,max(dprime(:))+1])
         % Find the Left Most Edge of each X Values bars
         if cueIndex == 1
@@ -163,13 +164,13 @@ for sesInd = 1:length(sessionList)+1
         errBar.LineWidth = 1;
     end
     set(gcf, 'Position', [0 0 1500 400]);
-    colorRT = brewermap(3, 'Bupu');
+    colorRT = [204, 95, 90; 189,189,189; 42, 76, 101]/255;
     % Reaction time:
     CIlowerRT(5,:) = CIlowerAvgRT;
     CIupperRT(5,:) = CIupperAvgRT;
     reactionTimeRes(5,:)  = avgreactionTimeRes;
     titlesxAxis = {'Valid', 'Neutral', 'Invalid'};
-    
+    figure;
     for cueIndex = 1:numLocations+1
         CIhigh = CIupperRT(cueIndex,:)-reactionTimeRes(cueIndex,:);
         CIlow = CIlowerRT(cueIndex,:)-reactionTimeRes(cueIndex,:);
@@ -197,12 +198,6 @@ for sesInd = 1:length(sessionList)+1
     end
     set(gcf, 'Position', [0 0 1200 200]);
     
-    % Save output
-    saveas(dpriFig, [figurefold sprintf('/sub-%s_ses-%s_dpriFig.svg',subject{1}, nametag)])
-    saveas(reactTimefig, [figurefold sprintf('/sub-%s_ses-%s_reactTimefig.svg',subject{1}, nametag)])
-    saveas(dpriFig, [figurefold sprintf('/sub-%s_ses-%s_dpriFig.png',subject{1}, nametag)])
-    saveas(reactTimefig, [figurefold sprintf('/sub-%s_ses-%s_reactTimefig.png',subject{1}, nametag)])
-    
     % Save the output
     output.raw{sesInd}                = currData;
     output.percentCorrect{sesInd}     = percentCorrect;
@@ -212,6 +207,5 @@ for sesInd = 1:length(sessionList)+1
     output.bootstrappedAvgOutput{sesInd} = bootstrappedAvgOutput;
     output.bootstrappedRT{sesInd}        = bootstrappedRT;
     output.bootstrappedAvgRT{sesInd}     = bootstrappedAvgRT;
-    close all
 end
 end
