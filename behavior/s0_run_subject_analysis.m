@@ -46,7 +46,7 @@ dataConcatenated = dataConcatenated(~isnan(dataConcatenated(:,8)),:);
 % put the subject and session information
 resultsDir = sprintf('/Volumes/server/Projects/attentionpRF/BehaviorData/BehaviorAnalyzed/sub-%s/',subject{1});
 
-[output] = attpRF_behavior_analyze_subj(subject, sessionList,dataConcatenated,resultsDir);
+[output] = analyze_subject(subject, sessionList,dataConcatenated,resultsDir);
 % Sessions are represented in cells in separate fields. the fourth cell
 % hosts the data averaged across sessions
 

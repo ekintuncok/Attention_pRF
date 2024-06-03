@@ -116,11 +116,11 @@ for sesInd = 1:length(sessionList)+1
     %% Bootstrapping d prime per location
     avgData{1} = analyzedPrime; %turn it into cell from matrix for statistical simplic
     
-    [bootstrappedOutput, CIlower, CIupper]          = attpRF_behavior_bootstrapData(conditions,1);
-    [bootstrappedAvgOutput, CIlowerAvg, CIupperAvg] = attpRF_behavior_bootstrapData(avgData,1);
+    [bootstrappedOutput, CIlower, CIupper]          = bootstrap_behavior(conditions,1);
+    [bootstrappedAvgOutput, CIlowerAvg, CIupperAvg] = bootstrap_behavior(avgData,1);
     
-    [bootstrappedRT, CIlowerRT, CIupperRT]          = attpRF_behavior_bootstrapData(conditions,2);
-    [bootstrappedAvgRT, CIlowerAvgRT, CIupperAvgRT] = attpRF_behavior_bootstrapData(avgData,2);
+    [bootstrappedRT, CIlowerRT, CIupperRT]          = bootstrap_behavior(conditions,2);
+    [bootstrappedAvgRT, CIlowerAvgRT, CIupperAvgRT] = bootstrap_behavior(avgData,2);
     
     %% PLOT THE RESULTS %%%%
     titlesxAxis = {'Valid', 'Neutral', 'Invalid'};
