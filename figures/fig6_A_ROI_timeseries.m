@@ -38,10 +38,13 @@ for roi = 1:length(ROIs)
         percent_change_att_roi(roi, location) = 100*(nanmean(attend_location) - nanmean(attend_all))./nanmean(attend_all);
         percent_change_att_out(roi, location) = 100*(nanmean(attend_out) - nanmean(attend_all))./nanmean(attend_all);
 
+
+        % padding the kernel with the initial and final datapoint:
         k1 = [attend_location(1), kernel_to_smooth, attend_location(end)];
         k2 = [attend_all(1), kernel_to_smooth, attend_all(end)];
         k3 = [attend_out(1),kernel_to_smooth, attend_out(end)];
-
+        
+        % convolve the pseudo time series with the kernel
         sm_attend_location = conv(attend_location, k1/sum(k1), 'same');
         sm_attend_all      = conv(attend_all, k2/sum(k2), 'same');
         sm_attend_out      = conv(attend_out, k3/sum(k3), 'same');
@@ -94,10 +97,6 @@ for roi = 1:length(ROIs)
         err.Color = [112, 41, 99]/255;
         err.CapSize = 0;
 
-        %
-        % s = shadedErrorBar(num_data_pts+2, diff(num_data_pts)+offset_errbars,...
-        %     abs(errbar(num_data_pts)),'lineProps',{'color',[112, 41, 99]/255}, 'patchSaturation', 0.3);
-        % s.mainLine.Marker = 'o';
         yline(offset_errbars, 'color', 'k')
         if roi == 1 && location == 1
             legend('Attend RF', '','Distributed','', 'Attend out','')
@@ -122,4 +121,3 @@ for roi = 1:length(ROIs)
     end
 end
 set(gcf,'color','w')
-set(gcf, 'Units', 'centimeters', 'Position', [0, 0, 6, 8])
