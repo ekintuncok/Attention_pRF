@@ -7,6 +7,18 @@ The project investigates how multiple visual cortex maps prepare for the represe
 
 ## Code structure:
 
+### behavior
+
+* behavior (folder)
+- s0_run_subject_analysis : calls the function "analyze_subject.m" to compute d prime and extract response times from each observer
+- analyze_subject : main function that computes reported behavior measurements (d prime, RT) for each observer), then plots these values with an error estimation based on within-subject variability. The output from this stage is saved separately for each observer. These files are in the OSF data directory BehaviorAnalyzed/sub-wlsubj***.
+- bootstrap_behavior: bootstraps the responses of each observer to calculate the error (in function analyze_subject)
+- save_group_data : loops through the subject data and concatenates them to create a group level data matrix. These files are in the OSF data directory BehaviorAnalyzed/behavioral_sensitivity.mat and BehaviorAnalyzed/reaction_time.mat
+- check_resp_rate : calculate the proportion of missed trial responses to report in the descriptives of the paper
+
+### eye 
+
+
 ### fMRI
 
 - s0_attentionpRF : main script that adds the needed toolboxes to path, defines the main data and figure folders, assigns subject and session lists, some basic indexing information (columns that represent attend up vs down, etc.
@@ -16,7 +28,4 @@ The project investigates how multiple visual cortex maps prepare for the represe
 
 - s3_s3_attpRF_visualizeprfsolutions : 
 
-### behavior
 
-
-### eye 
