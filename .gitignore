@@ -9,3 +9,6 @@ config.mat
 
 # Ignore MATLAB cache files
 *.asv
+
+# old functions
+old/*
