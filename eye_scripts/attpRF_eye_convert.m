@@ -1,13 +1,20 @@
-%% create tab file
-%%input filepath of eye movement data and the script edf2asc
+% this script converts EDF files to .mat files for the time stamps of
+% interest (in this case, the beginning of the trial, the onset of the
+% mapping stimulus, and the onset of the task stimulus) and marks the
+% blinks. These .mat files saved for each run of each scan for each
+% observer are then passed on to the "extract" script for further cleaning
+% before analysis. 
+
 s0_attentionpRF;
-subject_list      = dir(fullfile(path2project, 'derivatives', 'freesurfer', 'sub-*'));
-subject_list(9) = [];
 path2edfs = '/Volumes/server/Projects/attentionpRF/EDFfiles';
 path2designmat = '/Volumes/server/Projects/attentionpRF/BehaviorData/BehavioralRaw';
 filename2 = '/usr/local/bin/edf2asc';
 edf_run_tags = {'01','02','03','04','05','06','07','08','09','10'};
+num_runs = length(edf_run_tags);
 recording_rate = 1000;
+num_trials_per_run = 52;
+
+
 for subj_idx = 1:length(subject_list)
     subject = subject_list(subj_idx).name;
     disp(subject)
@@ -19,7 +26,7 @@ for subj_idx = 1:length(subject_list)
         fprintf('>> Design matrix loaded for scan session: %i\n', session_idx)
         trial_information = design.trialMat;
         trial_timing = design.trialDur;
-        trial_timing = cat(2, reshape(repmat([1:10],52,1),520,1),trial_timing);
+        trial_timing = cat(2, reshape(repmat([1:num_runs],num_trials_per_run,1),num_runs*num_trials_per_run,1),trial_timing);
         num_runs = unique(trial_information(:,1));
         for run_idx = 1:length(num_runs)
             fprintf('>> Current run: %i\n', run_idx)
@@ -60,7 +67,7 @@ for subj_idx = 1:length(subject_list)
                                         switch char(la(3))
                                             case '!MODE'
                                                 t = t+1;
-                                                tab(t,1)  = curr_trial_info(t,3);% trialID
+                                                tab(t,1)  = curr_trial_info(t,3); % trialID
                                                 tab(t,2)  = str2double(char(la(2)));    % trial start time
                                                 mask = trial_timing(:,1) == run_idx;
                                                 curr_timing = trial_timing(mask, [2:4, 10]);
@@ -77,15 +84,17 @@ for subj_idx = 1:length(subject_list)
                                         end
                                     else
                                         switch char(la(3))
-                                            case 'FIXATIONSTART'
+                                            % get the time stamps of
+                                            % interest 
+                                            case 'FIXATIONSTART' % when the trial started
                                                 t = t+1; % count up (add this to the message that is  the first message and occurs reliably in every trial)
                                                 tab(t,1)  = curr_trial_info(t,3);% trialID
                                                 tab(t,2)  = str2double(char(la(2)));    % trial start time
-                                            case 'MAPPINGSTIMSTART'
+                                            case 'MAPPINGSTIMSTART' % when the mapping stimulus was shown
                                                 if t ~= 0
                                                     tab(t,3)  = str2double(char(la(2))); 
                                                 end
-                                            case 'TARGETDISPLAY' %stimulus on
+                                            case 'TARGETDISPLAY' %when the task stimulus is on
                                                 if t ~= 0
                                                     tab(t,4)  = str2double(char(la(2)));
                                                 end
