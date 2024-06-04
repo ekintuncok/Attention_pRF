@@ -69,7 +69,7 @@ We used NYU High Performance Computing resources to run the GLM on our data. Thi
 
 We used NYU High Performance Computing resources to run the pRF model on our data. This folder hosts the scripts to run pRF models on the cluster.
 - __run_pRF_model__ : Uses prfVista/prfVistasoft.m to fit pRF model to the GLM output from the first stage (see below how the GLM output was prepared for this stage).
-- __glm.sbatch__ : batch script to run the pRF models on the NYU HPC cluster. 
+- __prf.sbatch__ : batch script to run the pRF models on the NYU HPC cluster. 
  
 
 ### pre-processing pipeline:
