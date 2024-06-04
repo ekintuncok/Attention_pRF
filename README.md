@@ -7,6 +7,18 @@ The project investigates how multiple visual cortex maps prepare for the represe
 
 # Code structure:
 
+The code in this repository is largely on MATLAB. 
+- Version:
+	MATLAB  '23.2.0.2409890 (R2023b)'
+- Dependencies: make sure these toolboxes are added to path to successfully run data pre-processing and/or get the manuscript figures. 
+	1. GLMDenoise: https://github.com/cvnlab/GLMdenoise
+	2. Vistasoft: https://github.com/vistalab/vistasoft
+	3. MRItools: https://github.com/WinawerLab/MRI_tools
+	4. prfVista: https://github.com/WinawerLab/prfVista
+	5. cvncode: https://github.com/cvnlab/cvncode
+	6. knkutils: https://github.com/cvnlab/knkutils
+	
+
 ## behavior
 
 Behavior data are shared in the preprocessed and raw format in the OSF repository. For making the paper figure 2A and 2B, run directly _figures/fig2_A_B_dprime_RT.m_ script on the preprocessed data in BehaviorAnalyzed folder. Analysis scripts explained below in detail.
@@ -35,15 +47,23 @@ Eye data are shared in the preprocessed and raw format in the OSF repository. Fo
 fMRI data are shared in the preprocessed and raw format in the OSF repository. For making the paper figures 4, 5, 6, 7 and 8, run directly the scripts inside the _figures_ folder with the corresponding name on the preprocessed data in the derivatives folder in OSF. Scripts are explained in more detail below.
 
 
+### generallinearmodel (folder name)
 
+We used NYU High Performance Computing resources to run the GLM on our data. This folder hosts the scripts to run GLM on the cluster.
+
+ 
 
 ### pre-processing pipeline:
 
 - __s0_attentionpRF__ : main script that adds the needed toolboxes to path, defines the main data and figure folders, assigns subject and session lists, some basic indexing information (columns that represent attend up vs down, etc.
 - __s1_attpRF_prepareforGLM__ : prepares the data for GLMdenoise, which is the first stage analysis in the pipeline. This script doesn't have to run on the processed data that is used to make the figures. Only to be used for repeating the entire analysis pipeline.
     	- (func) __gii2nii__ : For each observer, it converts the GIFTI fMRI files to NIFTI ang MGZ files. MGZ files are inputted to GLMdenoise
-   	- (func) __BIDSformatdesig__ : For each observer, it creates a design matrix to be inputted to GLMdenoise. This function is based on the winawerlab MRItools repository. 
+   	- (func) __BIDSformatdesign__ : For each observer, it creates a design matrix to be inputted to GLMdenoise. This function is based on the winawerlab MRItools repository. 
 
-- __s3_attpRF_visualizeprfsolutions__ : 
+- __s3_attpRF_visualizeprfsolutions__ : takes in the output from the pRF model for different conditions and converts those files to .mgz files. Later on, these mgr files are used in the analysis pipeline as well as for visualizations on the surface of each observer. Additionally, it hosts functions to get pRF parameter histograms and flat maps of surface overlaid with eccentricity and polar angle estimates (can call it for both atlas-based and hand-drawn ROIs). 
+	- (func) __getpRFparameterdist__ : plots histograms of pRF output
+	- (func) __getFlatMaps_ : plots model estimates on each observer's native surface 
+
+
 
 
