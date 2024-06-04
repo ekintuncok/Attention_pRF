@@ -1,6 +1,6 @@
 s0_attentionpRF;
 conditions = {'1','2','3','4','5'};
-folderTag = 'shuffled';
+folderTag = 'main'; % or 'shuffled'
 
 for subid = 1:length(subject_list)
     subjecttm = subject_list(subid).name;
@@ -28,6 +28,8 @@ end
 %     end
 %     getpRFparameterdist(path2project, subject, prfFolder, figuresFolder)
 % end
+
+
 % for subid = 1:length(subject_list)
 %     subjecttm = subject_list(subid).name;
 %     subject = subjecttm(5:end);

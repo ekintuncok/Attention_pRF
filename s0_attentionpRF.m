@@ -5,7 +5,6 @@
 %tbUse spm12
 setenv('SUBJECTS_DIR','/Volumes/server/Projects/attentionpRF/derivatives/freesurfer/')
 addpath(genpath('~/Documents/MATLAB/toolboxes/GLMDenoise'));
-addpath(genpath('~/Documents/MATLAB/toolboxes/GLMsingle'));
 addpath(genpath('~/Documents/MATLAB/toolboxes/vistasoft'));
 addpath(genpath('~/Documents/MATLAB/toolboxes/mri_tools'));
 addpath(genpath('~/Documents/MATLAB/toolboxes/prfVista'));
