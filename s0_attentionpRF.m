@@ -1,29 +1,49 @@
 %%%% ATTENTION PRF  %%%%
 %%%%%% Written by Ekin Tuncok
-%%% Main script for running different stages of analysis for attention pRF project.
+%%% Main script for running different stages of analysis for attention pRF project
 
-%tbUse spm12
-setenv('SUBJECTS_DIR','/Volumes/server/Projects/attentionpRF/derivatives/freesurfer/')
-addpath(genpath('~/Documents/MATLAB/toolboxes/GLMDenoise'));
-addpath(genpath('~/Documents/MATLAB/toolboxes/vistasoft'));
-addpath(genpath('~/Documents/MATLAB/toolboxes/mri_tools'));
-addpath(genpath('~/Documents/MATLAB/toolboxes/prfVista'));
-addpath(genpath('~/Documents/MATLAB/toolboxes/cvncode'));
-addpath(genpath('~/Documents/MATLAB/toolboxes/knkUtils'));
-addpath(genpath(cd));
+scriptDir = fileparts(mfilename('fullpath'));
+cd(scriptDir)
+addpath(genpath(fullfile(scriptDir)));
 
-path2project      = '/Volumes/server/Projects/attentionpRF/';
-addpath(genpath(fullfile(path2project, 'Code')));
-figfolder         = fullfile(path2project, 'figfiles');
-subject_list      = dir(fullfile(path2project, 'derivatives', 'freesurfer', 'sub-*'));
+aim = input('Please enter if you want to just visualize (press (0)) or analyze from scratch (this asks for dependencies, press (1)): ');
+
+if aim == 1
+    toolboxPath = input('Please enter the path that contains all dependencies: ', 's');
+    if ~exist(toolboxPath, 'dir')
+        warning('Inputted directory does not exist, double check if it is accurate.')
+    end
+    %%% ---------------- DEPENDENCIES ---------------- %%%
+    %setenv('SUBJECTS_DIR','/Volumes/server/Projects/attentionpRF/derivatives/freesurfer/')
+    addpath(genpath(fullfile(toolboxPath, 'GLMDenoise')));
+    addpath(genpath(fullfile(toolboxPath, 'vistasoft')));
+    addpath(genpath(fullfile(toolboxPath, 'mri_tools')));
+    addpath(genpath(fullfile(toolboxPath, 'prfVista')));
+    addpath(genpath(fullfile(toolboxPath, 'cvncode')));
+    addpath(genpath(fullfile(toolboxPath, 'knkUtils')));
+    %%% ---------------- DEPENDENCIES ---------------- %%%
+    if ~exist(fullfile(toolboxPath, 'GLMDenoise'), 'dir') || ...
+            ~exist(fullfile(toolboxPath, 'vistasoft'), 'dir') || ...
+            ~exist(fullfile(toolboxPath, 'mri_tools'), 'dir') || ...
+            ~exist(fullfile(toolboxPath, 'prfVista'), 'dir') || ...
+            ~exist(fullfile(toolboxPath, 'cvncode'), 'dir') || ...
+            ~exist(fullfile(toolboxPath, 'knkUtils'), 'dir')
+        warning('At least one dependency is missing in the path, double check if it resides in the toolboxPath')
+    else
+        fprintf('All dependencies added successfully.\n');
+    end
+end
+
+cd .. % go back to the main folder
+path2project      = pwd; %  define the main project directory
+subject_list      = dir(fullfile(path2project, 'BehaviorData', 'BehaviorAnalyzed', 'sub-*'));
 subject_list(9) = []; % excluded subject
-
+cd(scriptDir); % go back to the code directory
 subject_titles = cell(1,length(subject_list));
 for sbj_idx = 1:length(subject_list)
     curr_tag = subject_list(sbj_idx).name;
     subject_titles{sbj_idx} = sprintf('sub-%s', curr_tag(11:13));
 end
-
 session           = 'nyu3t99';
 sessionList       = {'nyu3t01','nyu3t02','nyu3t03','nyu3t04'};
 dataFolder        = 'fmriprep';
