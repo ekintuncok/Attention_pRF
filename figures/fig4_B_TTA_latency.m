@@ -63,8 +63,6 @@ end
 
 set(gcf, 'position', [0,0,600,600])
 
-fig_tag = fullfile(path2project,'figfiles/','fig_TTA_latency_comparison.png');
-print(gcf,fig_tag,'-dpng','-r300');
 
 
 % compare error bar overlaps:

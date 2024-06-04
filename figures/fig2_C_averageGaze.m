@@ -1,4 +1,5 @@
 s0_attentionpRF;
+
 try
     load(fullfile(path2project, sprintf('EDFfiles/EyeAnalyzed/EyeData.mat')));
 catch ME
@@ -55,8 +56,7 @@ set(gcf,'color','w')
 set(gca,'fontsize',18)
 set(gcf,'units','centimeter','position',[0,0,6,6])
 set(gca,'TickLength', [0.02 0.02], 'LineWidth', 2)
-fig_tag = fullfile(path2project,'figfiles/','fig_eye_pos_by_cond.png');
-print(gcf,fig_tag,'-dpng','-r300');
+
 
 
 %% mean eye position data across subjects: 
@@ -97,5 +97,4 @@ set(gcf,'color','w')
 set(gca,'fontsize',18)
 set(gcf,'units','centimeter','position',[0,0,8,8])
 set(gca,'TickLength', [0.02 0.02], 'LineWidth', 2)
-fig_tag = fullfile(path2project,'figfiles/','fig_mean_eye_pos_by_cond.png');
-print(gcf,fig_tag,'-dpng','-r300');
+

@@ -1,10 +1,10 @@
-path2project = '/Volumes/server/Projects/attentionpRF';
+s0_attentionpRF;
 
 try
     load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/behavioral_sensitivity.mat')));
     load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/reaction_time.mat')));
 catch ME
-    warning('>> I cannot find analyzed behavior data. Run /behavior/attpRF_behavior_analyze_group.m')
+    warning('>> I cannot find analyzed behavior data. Run /behavior/save_group_data.m')
 end
 
 numconds = 5;

@@ -121,3 +121,5 @@ for roi = 1:length(ROIs)
     end
 end
 set(gcf,'color','w')
+set(gcf, 'position', [0,0,600,600])
+

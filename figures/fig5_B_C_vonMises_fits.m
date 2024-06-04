@@ -47,14 +47,12 @@ for roi = 1:length(ROIs)
     %title(fit_title)
     yline(0,'k', 'LineWidth', 0.5)
     box off
-    set(gca,'Xticklabel',[]);
-    set(gca,'Yticklabel',[]);
     set(gcf,'color','w')
     set(gca,'FontName','roboto',    'fontsize',25)
     set(gca,'TickLength', [0.015 0.015], 'LineWidth', 1.5)
 end
 
-set(gcf, 'Units', 'centimeters', 'Position', [0, 0, 6, 4])
+set(gcf, 'position', [0,0,600,600])
 
 center_param = rad2deg(output.est_params(:,:,5));
 
@@ -145,13 +143,11 @@ for est_p = [1, 2, 4]
     end
     set(gca,'FontName','roboto',    'fontsize',18)
     set(gca,'TickLength', [0.015 0.015], 'LineWidth', 1.5)
-    set(gca,'XTick',[])
+    set(gca,'Xtick',[1:6],'XTickLabel',ROIs)
     iter=iter+1;
 end
-set(gcf, 'Units', 'centimeters', 'Position', [0, 0, 6, 4])
+set(gcf, 'position', [0,0,600,600])
 set(gcf,'color','w')
-%fig_tag = fullfile(path2project,'figfiles/',sprintf('fig_von_mises_reparameterized_params.png'));
-%print(gcf,fig_tag,'-dpng','-r300');
 
 
 % Run ANOVAS on reparameterized params:

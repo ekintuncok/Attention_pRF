@@ -90,5 +90,3 @@ for event_id = 1:length(onset_type)
 end
 set(gcf,'color','w')
 set(gcf,'Position', [0,0,1200,500])
-fig_tag = fullfile(path2project,'figfiles/','fig_TTA_all_trials.png');
-print(gcf,fig_tag,'-dpng','-r300');
