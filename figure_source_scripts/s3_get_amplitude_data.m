@@ -1,11 +1,14 @@
 % Attention pRF project: runs multiple relevant scripts for a specific type
 % of analysis using BOLD GLM results
 s0_attentionpRF;
+
 designFolder = 'main';
 prf_folder_name = 'prfFolder_2';
 cond_compare = {'Attend In', 'Distributed', 'Attend Out'};
 target_output_dir = fullfile(path2project, 'derivatives','amplitude_data/');
-analysis_type = 'MStimeseries';
+
+% what kind of analysis?
+analysis_type = input('Enter how you want to extract the amplitude data (see the main code body for options): ', 's');
 
 [columns, props] = attpRF_ampdata_column_indices(analysis_type);
 % "analysis_type" could be
