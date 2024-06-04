@@ -11,6 +11,7 @@ The project investigates how multiple visual cortex maps prepare for the represe
 1. Download the data: https://osf.io/g8b9v/
 2. clone this repository _inside_ the "attentionpRF" folder downloaded from OSF:
 ```
+cd /path/to/osf/attentionpRF
 git clone https://github.com/ekintuncok/Attention_pRF
 ```
 3. go to Attention_pRF/figures folder, run the corresponding figure script
