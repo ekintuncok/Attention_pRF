@@ -15,6 +15,7 @@ cd /path/to/osf/attentionpRF
 git clone https://github.com/ekintuncok/Attention_pRF
 ```
 3. go to Attention_pRF/figures folder, run the corresponding figure script
+	- You don't need to download any of the dependencies (listed below) to be able to reproduce the paper figures. When you run a script from the figures folder, you will initially be asked to either provide the path where all dependencies lie (should be in the same main folder!) or input a "0" to indicate that you just want to look at the processed data. This information will be saved after it's run one time so that you can continue to the next figures. Have fun! 
 
 # Code structure:
 
