@@ -50,7 +50,14 @@ fMRI data are shared in the preprocessed and raw format in the OSF repository. F
 ### generallinearmodel (folder name)
 
 We used NYU High Performance Computing resources to run the GLM on our data. This folder hosts the scripts to run GLM on the cluster.
+- __run_GLM__ : Uses the wrapper function _MRI_tools/BIDS/bidsGLM.m_ to run GLMdenoise on the data. Script can be modified by changing the toolbox directories.
+- __glm.sbatch__ : batch script to run the GLM on the NYU HPC cluster. 
 
+### prfmodel (folder name)
+
+We used NYU High Performance Computing resources to run the pRF model on our data. This folder hosts the scripts to run pRF models on the cluster.
+- __run_pRF_model__ : Uses prfVista/prfVistasoft.m to fit pRF model to the GLM output from the first stage (see below how the GLM output was prepared for this stage).
+- __glm.sbatch__ : batch script to run the pRF models on the NYU HPC cluster. 
  
 
 ### pre-processing pipeline:
