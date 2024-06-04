@@ -1,9 +1,14 @@
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
+
 try
     load(fullfile(path2project, 'derivatives/amplitude_data/amplitude_change_full_map.mat'));
     fprintf('>> Data successfully loaded!\n');
 catch ME
-    s2_get_amp_whole_map;
+    warning('>> I cannot find the 2D amplitude data. Try running /main_scripts_for_figures/s2_get_amp_whole_map.m');
 end
 
 % the default setting for this data is that the map responses are rotated

@@ -1,11 +1,15 @@
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
 
 % If "attpRF_fit_logistics_to_TTA" has been run, and the output is saved,
 % just load the fitting results:
 try
     load(fullfile(path2project, 'derivatives/trial_triggered_averages/latency_of_attenional_modulation.mat'));
 catch ME
-    attpRF_fit_logistics_to_TTA;
+    warning('>> I cannot find the event-triggered latency estimates. Try running /main_scripts_for_figures/attpRF_fit_logistics_to_TTA.m');
 end
 
 onset_type = {'_2_trial', '_2_gabor'};

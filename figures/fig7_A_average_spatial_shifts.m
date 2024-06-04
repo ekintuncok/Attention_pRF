@@ -1,6 +1,10 @@
 % make sure the pRF shift data is extracted and saved in a folder in the
 % project path!
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
 
 try
     load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal.mat'));
@@ -8,7 +12,7 @@ try
     shf_f = load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_focal_shuffled.mat'));
     shf_d = load(fullfile(path2project, 'derivatives/prf_shift_data/distance_in_distributed_shuffled.mat'));
 catch ME
-    s7_extract_pRFshifts;
+    warning('>> I cannot find the pRF center data for shift analysis. Try running /main_scripts_for_figures/s7_extract_pRFshifts.m');
 end
 distance_in_attend_target_shuffled = shf_f.distance_in_attend_target;
 distance_in_attend_distributed_shuffled = shf_d.distance_in_att_distributed;

@@ -1,9 +1,14 @@
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
+
 try
     load(fullfile(path2project, 'derivatives/amplitude_data/vonmises_output.mat'));
     fprintf('>> Data successfully loaded!\n');
 catch ME
-    s6_attpRF_attMod_afo_pangle_diff;
+    warning('>> I cannot find the von Mises estimates. Try running /main_scripts_for_figures/s6_attpRF_attMod_afo_pangle_diff.m ');
 end
 pa_distance_bins = -180:20:180;
 

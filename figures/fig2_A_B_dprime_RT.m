@@ -1,4 +1,8 @@
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
 
 try
     load(fullfile(path2project, sprintf('BehaviorData/BehaviorAnalyzed/behavioral_sensitivity.mat')));

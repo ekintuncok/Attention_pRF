@@ -1,10 +1,15 @@
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
+
 [columns, props] = attpRF_ampdata_column_indices('prf_shift_directional_graphs');
 
 try
     load(fullfile(path2project, 'derivatives/prf_shift_data/prf_centers_for_vector_figs.mat'));
 catch ME
-    s8_pRF_position_for_vector_plots;
+    warning('>> I cannot find the pRF center data for shift vector figures. Try running /main_scripts_for_figures/s8_pRF_position_for_vector_plots.m');
 end
 
 % set the threshold:

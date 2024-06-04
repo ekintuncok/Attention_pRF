@@ -1,11 +1,15 @@
-s0_attentionpRF;
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
+
 
 try
     load(fullfile(path2project, 'derivatives/amplitude_data/att_resp_reorg_pseudotimeseries.mat'));
     fprintf('>> Data successfully loaded!\n');
 catch ME
-    analysis_type = 'MStimeseries';
-    s3_get_amplitude_data;
+    warning('>> I cannot find the pseudo time series data. Try running /main_scripts_for_figures/s3_get_amplitude_data.m');
 end
 
 num_data_pts = 49;

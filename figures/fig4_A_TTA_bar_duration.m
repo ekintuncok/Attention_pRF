@@ -1,6 +1,10 @@
-% check the bar duration effects:
-s0_attentionpRF;
-data_type = 'raw';
+if ~ exist('config.mat','file')
+    s0_attentionpRF;
+else
+    load('config.mat');
+end
+
+data_type = 'raw'; % as opposed to reconstructed GLM responses
 trial_types = {'all'};
 onset_type = {'_2_trial','_2_gabor'};
 
