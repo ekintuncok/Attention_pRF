@@ -118,7 +118,7 @@ switch designFolder
             end
         end
 
-    case '10'
+    case 'glmsingle'
         fprintf('>>> design matrix prepped for glmsingle \n')
         for ind = 1:length(event_type)
 

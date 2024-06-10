@@ -140,16 +140,18 @@ for ii = 1:n
     linearInd = sub2ind(size(m), row_nums{ii}, col_num{ii});
     m(linearInd) = 1;
     design{ii} = m;
-    for ind = 1:length(col_num{ii})
-        if T{ii}.bar_duration(ind) == 2 && ~strcmp(designFolder, '10')
-            design{ii}(row_nums{ii}(ind)+1, col_num{ii}(ind)) = 1;
-        end
-        if mod(T{ii}.mappingLocs(ind), 2) == 0 && T{ii}.bar_duration(ind) == 1
-            %fprintf('Warning: Correcting for the even-odd asymmetry by adjusting the variable weights....\n')
-            design{ii}(row_nums{ii}(ind), col_num{ii}(ind)) = 1;
-        elseif mod(T{ii}.mappingLocs(ind), 2) == 0 && T{ii}.bar_duration(ind) == 2
-            design{ii}(row_nums{ii}(ind), col_num{ii}(ind)) = 1;
-            design{ii}(row_nums{ii}(ind)+1, col_num{ii}(ind)) = 1;
+    if ~strcmp(designFolder, 'glmsingle')
+        for ind = 1:length(col_num{ii})
+            if T{ii}.bar_duration(ind) == 2
+                design{ii}(row_nums{ii}(ind)+1, col_num{ii}(ind)) = 1;
+            end
+            if mod(T{ii}.mappingLocs(ind), 2) == 0 && T{ii}.bar_duration(ind) == 1
+                %fprintf('Warning: Correcting for the even-odd asymmetry by adjusting the variable weights....\n')
+                design{ii}(row_nums{ii}(ind), col_num{ii}(ind)) = 1;
+            elseif mod(T{ii}.mappingLocs(ind), 2) == 0 && T{ii}.bar_duration(ind) == 2
+                design{ii}(row_nums{ii}(ind), col_num{ii}(ind)) = 1;
+                design{ii}(row_nums{ii}(ind)+1, col_num{ii}(ind)) = 1;
+            end
         end
     end
 end
