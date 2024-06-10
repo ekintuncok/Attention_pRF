@@ -2,10 +2,10 @@ s0_attentionpRF;
 shift_data = [];
 
 %cond_check = input('randomize the location column idx?');
-cond_check = 1;
+cond_check = 0;
 if cond_check == 0
     designFolder = 'main';
-    folderTag = 'prfFolder_2';
+    folderTag = 'main';
     cond_tag = '';
 else
     designFolder = 'shuffled';
@@ -22,7 +22,7 @@ for sub = 1:length(subject_list)
     labels = attpRF_load_ROIs(path2project, subject);
 
     retinotopy_conditions = {'1', '2', '3', '4', '5'};
-    GLMfolder         = sprintf('%sderivatives/GLMdenoise/%s/%s/ses-%s/', path2project, designFolder, subject, session);
+    GLMfolder         = fullfile(path2project, sprintf('derivatives/GLMdenoise/%s/%s/ses-%s/', designFolder, subject, session));
     load([GLMfolder sprintf('%s_ses-%s_%s_results.mat', subject, session, designFolder)]);% this loads 'betas' and 'R2'
 
     R2 = R2';
@@ -111,7 +111,5 @@ end
 distance_in_attend_target = [shift_data_thresholded(:,1:2), (distance_in_attend_target)];
 distance_in_att_distributed = [shift_data_thresholded(:,1:2), (distance_in_distributed)];
 
-
 save(fullfile(path2project, sprintf('derivatives/prf_shift_data/distance_in_focal%s.mat', cond_tag)), 'distance_in_attend_target', '-v7.3');
 save(fullfile(path2project, sprintf('derivatives/prf_shift_data/distance_in_distributed%s.mat', cond_tag)), 'distance_in_att_distributed', '-v7.3');
-
