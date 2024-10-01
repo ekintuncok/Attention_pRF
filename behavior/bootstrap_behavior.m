@@ -1,4 +1,4 @@
-function [output, CIlower, CIupper] = attpRF_behavior_bootstrapData(data,type)
+function [output, CIlower, CIupper] = bootstrap_behavior(data,type)
 %%%% ATTENTION PRF %%%%
 % type == 1 bootstraps dprime, type == 2 bootstraps reaction time
 %% Bootstrap

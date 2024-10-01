@@ -35,7 +35,7 @@ cue_colors = [204, 95, 90
     42, 76, 101]/255;
 figure;
 subplot(1,2,1)
-pp = plot(dpri_data_group_avg(1:4,:),'d', 'MarkerSize', 10, 'LineWidth',3);
+pp = plot(dpri_data_group_avg(1:4,:),'d', 'MarkerSize', 5, 'LineWidth',3);
 pp(1).MarkerFaceColor = [204, 95, 90]/255;
 pp(2).MarkerFaceColor = [189,189,189]/255;
 pp(3).MarkerFaceColor = [42, 76, 101]/255;
@@ -59,7 +59,7 @@ hold on
 
 for ss = 1:size(dpri_data,2)
     s = plot(squeeze(dpri_data(:,ss,:)), '.', 'markerfacecolor',cue_colors(ss,:),...
-        'markeredgecolor',cue_colors(ss,:), 'markersize',14, 'LineWidth',1.5);
+        'markeredgecolor',cue_colors(ss,:), 'markersize',10, 'LineWidth',1.5);
 end
 set(gca,'FontName','roboto',    'fontsize',25)
 set(gca,'TickLength', [0.03 0.03], 'LineWidth', 2)
@@ -81,7 +81,7 @@ for cond_idx = 1:numconds
     end
 end
 
-rt_group_avg = mean(rt_data, 3);
+rt_group_avg = nanmean(rt_data, 3);
 numLocations = 4;
 colorRT =  [240,240,240
     189,189,189
@@ -90,7 +90,7 @@ colorRT =  [240,240,240
 CIhigh = CIupper-rt_group_avg;
 CIlow = CIlower-rt_group_avg;
 subplot(1,2,2)
-pp = plot(rt_group_avg(1:4,:),'s', 'MarkerSize', 10, 'LineWidth',3);
+pp = plot(rt_group_avg(1:4,:),'s', 'MarkerSize', 5, 'LineWidth',3);
 pp(1).MarkerFaceColor = [204, 95, 90]/255;%[1,1,1];
 pp(2).MarkerFaceColor =  [189,189,189]/255;%[1,1,1];
 pp(3).MarkerFaceColor =  [42, 76, 101]/255;%[1,1,1];
@@ -111,7 +111,7 @@ hold on
 box off
 for ss = 1:size(rt_group_avg,2)
     s = plot(squeeze(rt_data(:,ss,:)), '.', 'markerfacecolor',cue_colors(ss,:),...
-        'markeredgecolor',cue_colors(ss,:), 'markersize',14,'LineWidth',1.5);
+        'markeredgecolor',cue_colors(ss,:), 'markersize',10,'LineWidth',1.5);
 end
 hold on
 errBar = errorbar(1:5, (rt_group_avg),(CIlow),(CIhigh),'k','linestyle','none','linewidth',2);

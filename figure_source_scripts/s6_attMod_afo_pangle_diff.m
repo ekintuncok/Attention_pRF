@@ -14,4 +14,4 @@ pa_distance_bins = -180:20:180;
 output       = attpRF_fit_vonMises_to_attSignal(data, columns, props.target_angle_location, props.eccen_limits, pa_distance_bins, fit_func);
 
 target_output_dir = fullfile(path2project, 'derivatives','amplitude_data/');
-save([target_output_dir,'vonmises_output.mat'], 'output', '-v7.3');
+save([target_output_dir,'vonmises_output_30bins.mat'], 'output', '-v7.3');

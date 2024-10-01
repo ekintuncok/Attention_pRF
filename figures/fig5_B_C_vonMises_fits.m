@@ -69,7 +69,7 @@ for ii = 1:size(center_param, 1)
     end
 end
 
-reparameterized_estimates = cat(3, max(output.recon_data, [],3), min(output.recon_data, [],3), center_param, output.angle_intercept);
+reparameterized_estimates = cat(3, max(output.recon_data, [],3), min(output.recon_data, [],3), center_param, output.angle_intercept, output.fwhm);
 
 lower_ci = zeros(length(ROIs), size(output.est_params,3)+1, 1);
 upper_ci = zeros(length(ROIs), size(output.est_params,3)+1, 1);
@@ -77,9 +77,9 @@ num_iterations = 1000;
 
 for roi = 1:length(ROIs)
     for p = 1:size(reparameterized_estimates, 3)+1
-        if p < 5
+        if p < 6
             confidence_int = prctile(reparameterized_estimates(:,roi, p), [low_prct_range, high_prct_range]);
-        elseif p == 5
+        elseif p == 6
             confidence_int = prctile(reparameterized_estimates(:,roi, 1)-reparameterized_estimates(:,roi, 2), [low_prct_range, high_prct_range]);
         end
         lower_ci(roi, p, :) = confidence_int(1);
@@ -91,16 +91,17 @@ end
 avg_params = squeeze(mean(reparameterized_estimates,1, 'omitnan'));
 titles = {'Peak', 'Trough', 'Center', 'Spread'};
 ylabels = {'% BOLD change', '% BOLD change', 'distance from target (°)','degrees (°)'};
-lims = [-0.15, 50, 0.19, 200];
+lims = [-0.15, 50, 0.19, 200, 75];
 yticks_list = [-0.05, 0, 0.1, 0.2, 0.3, 0.4;...
     -0.3, -0.2, -0.1, 0, 0.1, 0.2;...
     -40 -30 -20, -10, 0, 10;...
-    0, 100, 150, 200, 250, 300];
+    0, 100, 150, 200, 250, 300;...
+    0, 15, 30, 45, 60, 75];
 figure;
-pos=[1,1,2];
+pos=[1,1,2,3];
 iter=1;
-for est_p = [1, 2, 4]
-    subplot(1,2,pos(iter))
+for est_p = [1, 2, 4, 5]
+    subplot(1,3,pos(iter))
 
     if est_p == 1
         err_clr = [204, 95, 90]/255;
@@ -113,13 +114,14 @@ for est_p = [1, 2, 4]
         'linewidth',1.5);
     hold on
     [ngroups,nbars] = size(avg_params(:,est_p)');
+
     if est_p == 2
         s = plot([avg_params(:,est_p-1)+abs(avg_params(:,est_p))]','o','MarkerSize',1,'MarkerEdgeColor',[0,0,0],...
             'MarkerFaceColor',[0,0,0],...
             'linewidth',1.5);
         x = s.XData;
-        e = errorbar(x, [avg_params(:,est_p-1)+abs(avg_params(:,est_p))]', [avg_params(:,est_p-1)+abs(avg_params(:,est_p))]' - lower_ci(:,5)',...
-            [avg_params(:,est_p-1)+abs(avg_params(:,est_p))]' - upper_ci(:,5)','color',[0,0,0],'linewidth',2,'linestyle', 'none');
+        e = errorbar(x, [avg_params(:,est_p-1)+abs(avg_params(:,est_p))]', [avg_params(:,est_p-1)+abs(avg_params(:,est_p))]' - lower_ci(:,6)',...
+            [avg_params(:,est_p-1)+abs(avg_params(:,est_p))]' - upper_ci(:,6)','color',[0,0,0],'linewidth',2,'linestyle', 'none');
         e.CapSize = 5;
     end
 

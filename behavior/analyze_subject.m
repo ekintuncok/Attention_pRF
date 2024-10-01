@@ -1,4 +1,4 @@
-function [output] = analyze_subject(sessionList, dataConcatenated, resultsDir)
+function [output] = analyze_subject(sessionList, dataConcatenated, resultsDir, mapping_stimulus_locations, by_ms_loc)
 % Set and make the folders for the subject:
 
 figurefold = [resultsDir 'figures'];
@@ -12,6 +12,7 @@ data = dataConcatenated;
 numLocations = 4;
 numCueType   = 3;
 
+ms = 4;
 preCue       = 5;
 postCue      = 6;
 gaborTilt    = 7;
@@ -42,7 +43,10 @@ for sesInd = 1:length(sessionList)+1
     analyzedPrime(:,4) = currData(:,response) ==  1; % CW = "yes",  CCW = "no"
     analyzedPrime(:,7) = currData(:,reactionTime);
     analyzedPrime(:,8) = currData(:,answer);
-    
+    analyzedPrime(:,9) = currData(:,ms);
+
+
+
     % Create a new column for the cue type
     % Cue validity (1: valid cue, 2: neutral cue, 3: invalid cue)
     for ind = 1:length(currData)
@@ -74,6 +78,14 @@ for sesInd = 1:length(sessionList)+1
     for cueIndex = 1:numLocations
         conditions{cueIndex,1} = analyzedPrime(analyzedPrime(:,2) == cueIndex,:);
     end
+
+    if sesInd == 5 && by_ms_loc == true
+        for cueIndex = 1:numLocations
+            ms_locations_near_target = mapping_stimulus_locations(mapping_stimulus_locations(:,4) == cueIndex & mapping_stimulus_locations(:, 5) == 1);
+            conditions{cueIndex} = conditions{cueIndex}(ismember(conditions{cueIndex}(:, 9), ms_locations_near_target),:);
+        end
+    end
+
     
     % preallocate:
     dprime = zeros(numLocations, numCueType);

@@ -5,7 +5,7 @@ else
 end
 
 try
-    load(fullfile(path2project, 'derivatives/amplitude_data/amplitude_change_full_map.mat'));
+    load(fullfile(path2project, 'derivatives/amplitude_data/amplitude_change_full_map_null_trials.mat'));
     fprintf('>> Data successfully loaded!\n');
 catch ME
     warning('>> I cannot find the 2D amplitude data. Try running /main_scripts_for_figures/s2_get_amp_whole_map.m');
