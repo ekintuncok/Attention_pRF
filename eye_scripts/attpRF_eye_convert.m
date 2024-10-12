@@ -3,19 +3,20 @@
 % mapping stimulus, and the onset of the task stimulus) and marks the
 % blinks. These .mat files saved for each run of each scan for each
 % observer are then passed on to the "extract" script for further cleaning
-% before analysis. 
+% before analysis.
 
 s0_attentionpRF;
 path2edfs = '/Volumes/server/Projects/attentionpRF/EDFfiles';
 path2designmat = '/Volumes/server/Projects/attentionpRF/BehaviorData/BehavioralRaw';
 filename2 = '/usr/local/bin/edf2asc';
 edf_run_tags = {'01','02','03','04','05','06','07','08','09','10'};
-num_runs = length(edf_run_tags);
+run_n = length(edf_run_tags);
 recording_rate = 1000;
 num_trials_per_run = 52;
 
 
-for subj_idx = 1:length(subject_list)
+for subj_idx = 2:length(subject_list)
+    calibration_accuracy = [];
     subject = subject_list(subj_idx).name;
     disp(subject)
     session_list = dir(fullfile(path2designmat, subject, '*experimentalDesignMat*'));
@@ -26,7 +27,7 @@ for subj_idx = 1:length(subject_list)
         fprintf('>> Design matrix loaded for scan session: %i\n', session_idx)
         trial_information = design.trialMat;
         trial_timing = design.trialDur;
-        trial_timing = cat(2, reshape(repmat([1:num_runs],num_trials_per_run,1),num_runs*num_trials_per_run,1),trial_timing);
+        trial_timing = cat(2, reshape(repmat([1:run_n],num_trials_per_run,1),run_n*num_trials_per_run,1),trial_timing);
         num_runs = unique(trial_information(:,1));
         for run_idx = 1:length(num_runs)
             fprintf('>> Current run: %i\n', run_idx)
@@ -56,7 +57,7 @@ for subj_idx = 1:length(subject_list)
                         sameData = 1;
                         while sameData
                             line = fgetl(msgfid);
-                            if ~ischar(line)                            % end of file
+                            if ~ischar(line)
                                 sameData = 0;
                                 break;
                             end
@@ -85,18 +86,25 @@ for subj_idx = 1:length(subject_list)
                                     else
                                         switch char(la(3))
                                             % get the time stamps of
-                                            % interest 
+                                            % interest
                                             case 'FIXATIONSTART' % when the trial started
                                                 t = t+1; % count up (add this to the message that is  the first message and occurs reliably in every trial)
-                                                tab(t,1)  = curr_trial_info(t,3);% trialID
+                                                tab(t,1)  = curr_trial_info(t,3);% precue direction
                                                 tab(t,2)  = str2double(char(la(2)));    % trial start time
                                             case 'MAPPINGSTIMSTART' % when the mapping stimulus was shown
                                                 if t ~= 0
-                                                    tab(t,3)  = str2double(char(la(2))); 
+                                                    tab(t,3)  = str2double(char(la(2)));
                                                 end
                                             case 'TARGETDISPLAY' %when the task stimulus is on
                                                 if t ~= 0
                                                     tab(t,4)  = str2double(char(la(2)));
+                                                end
+                                            case '!CAL'
+                                                if length(la)>12
+                                                    err1=la(10);
+                                                    err2=la(12);
+                                                    clb_err = [session_idx, run_idx, str2num(err1{1}), str2num(err2{1})];
+                                                    calibration_accuracy = [calibration_accuracy; clb_err];
                                                 end
                                         end
                                     end
@@ -112,6 +120,8 @@ for subj_idx = 1:length(subject_list)
                         fclose(msgfid);
                         % path_blink=sprintf('%s\%s',path,msgstr);
                         % path3=extract_blink(path_blink);
+
+                        % extracts the blink information:
                         msgfid = fopen(msgstr,'r');
                         blink = [];
                         t = 0;
@@ -141,15 +151,33 @@ for subj_idx = 1:length(subject_list)
                         dat.Var5 = [];
                         if size(dat,2) == 4
                             dat_arr = table2array(dat);
+
+                            % remove blinks:
+                            for thisBlink = 1:size(blink,1)
+                                blink_start=find(dat_arr(:,1) == blink(thisBlink,1));
+                                blink_end=find(dat_arr(:,1) == blink(thisBlink,2));
+                                dat_arr(blink_start:blink_end,:) = [];
+                            end
+
                             data_run = [];
                             for t = 1:size(tab,1)
-                                if strcmp(subject, 'sub-wlsubj049')
+                                mask = trial_timing(:,1) == run_idx;
+                                curr_timing = trial_timing(mask, [2:4, 10]);                                if strcmp(subject, 'sub-wlsubj049')
                                     trial_end_timestamp_idx = 3;
                                 else
                                     trial_end_timestamp_idx = 4;
                                 end
                                 currTStart = tab(t,2);
-                                currTEnd = tab(t,trial_end_timestamp_idx);
+                                if t < 52
+                                    currTEnd = tab(t+1, 2)-1;
+                                else
+                                    % for the last trial, this part
+                                    % calculates the trial end based on its
+                                    % duration (either 4 or 5 seconds)
+                                    % because no trial start data to anchor
+
+                                    currTEnd = currTStart+sum(curr_timing(end))*recording_rate;
+                                end
                                 eye_position_data = dat_arr(dat_arr(:,1)>=currTStart & dat_arr(:,1)<=currTEnd,:);
                                 curr_run_info(1) = subj_idx;
                                 curr_run_info(2) = session_idx;
@@ -158,7 +186,14 @@ for subj_idx = 1:length(subject_list)
                                 curr_run_info(5) = tab(t,1); % which precue?
 
                                 currDat = cat(2, [repmat(curr_run_info, length(eye_position_data), 1)], eye_position_data);
+                                currDat(:,10) = zeros(length(currDat), 1);
                                 data_run = cat(1, data_run,currDat);
+                                timestamp_of_fx = find(data_run(:,6)==tab(t,2));
+                                timestamp_of_ms = find(data_run(:,6)==tab(t,3));
+                                timestamp_of_gb = find(data_run(:,6)==tab(t,4));
+                                data_run(timestamp_of_fx:timestamp_of_fx+300, 10) = 1;
+                                data_run(timestamp_of_ms:timestamp_of_ms+curr_timing(t,3)*recording_rate, 10) = 2;
+                                data_run(timestamp_of_gb:timestamp_of_gb+300, 10) = 3;
                             end
 
                             % Delete msg & dat when no more needed (always keep the edf)
@@ -178,5 +213,6 @@ for subj_idx = 1:length(subject_list)
                 end
             end
         end
+        save(sprintf('MATs/calibration_accuracy.mat',filename),'calibration_accuracy', 'calibration_accuracy');
     end
 end
